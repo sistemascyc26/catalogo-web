@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&C Distribuciones S. de R.L. de C.V.</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="brand-container">
+            <img src="https://drive.google.com/thumbnail?id=1dpyafTU2QzWbQmwflotj0MYKnmDzi2P5" alt="Logo C&C Distribuciones" class="logo-img">
+            <h1>C&C Distribuciones S. de R.L. de C.V.</h1>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar productos por nombre..." onkeyup="applyFilters()">
+        </div>
+    </header>
+
+    <main>
+        <aside>
+            <h3>Categorías</h3>
+            <ul class="category-list" id="category-list">
+                <li class="active" onclick="setCategory('Todos', this)">Todas las Categorías</li>
+                <li onclick="setCategory('Harina', this)">Harinas</li>
+                <li onclick="setCategory('Arroz', this)">Arroz</li>
+                <li onclick="setCategory('Pasta', this)">Pastas</li>
+                <li onclick="setCategory('Refrescos', this)">Refrescos</li>
+                <li onclick="setCategory('Alcohol', this)">Alcohol y Vinos</li>
+                <li onclick="setCategory('Pañales', this)">Pañales</li>
+                <li onclick="setCategory('Papel', this)">Papel y Servilletas</li>
+                <li onclick="setCategory('Jabones', this)">Jabones</li>
+                <li onclick="setCategory('Cigarros', this)">Cigarros</li>
+                <li onclick="setCategory('Descechables', this)">Descechables</li>
+                <li onclick="setCategory('Abarroteria', this)">Abarrotería General</li>
+            </ul>
+        </aside>
+
+        <section class="content-area">
+            <h2 class="section-title" id="current-category-title">Catálogo Completo</h2>
+            <div class="product-grid" id="product-container">
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>C&C Distribuciones</h3>
+                <p>Somos tu distribuidora de confianza. Ofrecemos el mejor surtido de abarrotería general, harinas, granos básicos y una amplia variedad de bebidas alcohólicas y refrescos para abastecer tu negocio al mejor precio del mercado.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contactos</h3>
+                <ul>
+                    <li>📍 <strong>Dirección:</strong> Aldea Tulin, KM 176, Contiguo a Muñoz Lobo Supermercado</li>
+                    <li>📞 <strong>Teléfono:</strong> +504 3331-4163</li>
+                    <li>✉️ <strong>Correo:</strong> ventas@cycdistribucioneshn.com</li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Horario de Atención</h3>
+                <ul>
+                    <li>📅 <strong>Lunes a Viernes:</strong> 8:00 AM - 5:00 PM</li>
+                    <li>📅 <strong>Sábados:</strong> 8:00 AM - 2:00 PM</li>
+                    <li>⚠️ <strong>Domingos:</strong> Cerrado</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 C&C Distribuciones S. de R.L. de C.V. - Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/50433317604?text=Hola,%20me%20gustaría%20cotizar%20algunos%20productos." class="whatsapp-btn" target="_blank" aria-label="Contactar por WhatsApp">
+        <svg viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564c.173.087.289.129.332.202.043.073.043.423-.101.827z"></path>
+        </svg>
+    </a>
+
+    <script>
+        // Mapeo numérico de categorías
+        const catMap = {
+            1: "Harina",
+            2: "Arroz",
+            3: "Pasta",
+            4: "Refrescos",
+            5: "Alcohol",
+            6: "Abarroteria",
+            7: "Jabones",
+            8: "Cigarros",
+            9: "Descechables",
+            10: "Pañales",
+            11: "Papel"
+        };
+
+        // BASE DE DATOS DE PRODUCTOS
+        // Formato: ["Nombre", "Unidad", ID_Categoria, "URL_IMAGEN"]
+        // NOTA: El cuarto espacio es para el enlace de la imagen. Mira el primer producto como ejemplo.
+        const rawData = [
+
+            //---Abarroteria---//
+            ["TIPITIN BESOS PINTA BOCA 15 BS/24/12G", "15", 6, "https://img.pacifiko.com/PROD/resize/1/1000x1000/Mzg3NWE5ZG_194.jpg"],
+            ["TIPITIN BESOS MORA AZUL 15BS724/12G", "15", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/6646/image_1024?unique=67f4f52"],
+            ["TIPITIN CERVECITA 15BS/24/13G", "15", 6, "https://lacolonia.vtexassets.com/arquivos/ids/253057/7406234001555_1.jpg?v=638930293223270000"],
+            ["TIPITIN DOS CORAZONES 15BS/24/12G", "15", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/6633/image_1024?unique=4de26c3"],
+            ["TIPITIN SANDIA 15BS/24/12G", "15", 6, "https://walmartni.vtexassets.com/arquivos/ids/173887/Paleta-Tipitin-Sabor-Sandia-288Gr-1-6510.jpg?v=637696069105730000"],
+            ["MINI BUM MANGO 12/100/6G", "12", 6, "https://partycenter.com.gt/wp-content/uploads/2025/04/7406234003795-1.png"],
+            ["MINI BUM SANDIA 12/100/6G", "12", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-EQQkt7abejW0qmuxcko_JcaE2EBWL0nQmw&s"],
+            ["MINI BUM SURTIDO 12BS/100/6G", "12", 6, "https://colombinacontentmanager-prd.s3.us-east-1.amazonaws.com/Dulces/7702011145857_A1N1_es.jpg"],
+            ["BONBON BUM YOGURT STDO 15BS/24/14G", "15", 6, "https://lacoloniaqa.vteximg.com.br/arquivos/ids/165893-500-500/Abarrotes-Snacks-Paletas-Bombones-y-Chicles_7401085203455_1.jpg?v=636984625721200000"],
+            ["BONBON BUM STDO 15BS/24/17G", "15", 6, "https://lacolonia.vtexassets.com/arquivos/ids/252892-800-800?v=638920085296300000&width=800&height=800&aspect=true"],
+            ["BONBON BUM SANDIA 15 BS/24/17G", "15", 6, "https://walmarthn.vtexassets.com/arquivos/ids/721441/M-3_walmarthn_ZHOxIXatJK_60412_01.jpg?v=638967486104200000"],
+            ["BONBON BUM FRESA 15BS/24/13G", "15", 6, "https://eurosuper.vtexassets.com/arquivos/ids/189397/7702011281166.jpg?v=638774076553430000"],
+            ["XTIME GUM MENTA 12BS/100/4G", "12", 6, "https://colombinacontentmanager-prd.s3.us-east-1.amazonaws.com/Dulces/7702011136039_A1N1_es.jpg"],
+            ["XTIME GUM CANELA 12BS/100/4G", "12", 6, "https://img.pacifiko.com/PROD/resize/1/1000x1000/ZjgwZTQ5Ym.png"],
+            ["XTIME GUM YERVABUENA 12BS/100/4G", "12", 6, "https://colombinacontentmanager-prd.s3.us-east-1.amazonaws.com/Dulces/7702011136046_A1N1_es.jpg"],
+            ["INSECTICIDA ESPIRAL IRUZ LAVANDA 1*60*10", "60", 6, "https://grupoalzahonduras.com/wp-content/uploads/2024/01/IRUZ-INSECTICIDA-LAVANDA-140-GRS.jpg"],
+            ["INSECTICIDA ESPIRAL IRUZ CITRONELA 1*60*10", "60", 6, "https://grupoalzahonduras.com/wp-content/uploads/2024/01/IRUZ-INSECTICIDA-CITRONELA-140-GRS.jpg"],
+            ["VELA SAN JUDAS #6 1*50", "50", 6, "https://drive.google.com/thumbnail?id=1Ro-Kr2yWdSX_-TBmUVTf3-0lbsKru-m3"],
+            ["VELA SAN JUDAS #10 1*50", "50", 6, "https://drive.google.com/thumbnail?id=1U9hv7iEeaO_TZLOdOVJnf0f8o3FTeI5X"],
+            ["PALILLO PARA PALETA 1*32", "32", 6, "https://walmarthn.vtexassets.com/arquivos/ids/487880/59624_01.jpg?v=638633617497430000"],
+            ["PALETA PARA CHOCOBANANO 1*36", "36", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3797/image_1024?unique=ed5202d"],
+            ["PAPEL ALUMINIO CAMPANITA 25FT/24", "24", 6, "https://proimahonduras.com/wp-content/uploads/2024/11/C-1.png"],
+            ["AZUCAR DE 1 LB", "20", 6, "https://dopals.com/web/image/product.template/57574/image"],
+            ["AZUCAR DE 2 LBS", "10", 6, "https://lacolonia.vtexassets.com/arquivos/ids/188874-800-800?v=637122067223830000&width=800&height=800&aspect=true"],
+            ["AZUCAR MORENA DE 1 LB", "20", 6, "https://drive.google.com/thumbnail?id="],
+            ["AZUCAR MORENA DE 2 LB", "10", 6, "https://drive.google.com/thumbnail?id=1Bym0_kywxLgh9HLPC8cew_iuuilqcFC1"],
+            ["AZUCAR DE 4 LBS", "10", 6, "https://lacolonia.vtexassets.com/arquivos/ids/188869/Abarrotes-Endulzante-Azucar-Blanca_7429905700168_1.jpg?v=637122067201800000"],
+            ["AZUCAR MORENA DE 4 LBS", "10", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3634/image_1024?unique=645e9ff"],
+            ["RASURADORA BIC TWIN NORMAL EXH. 1*24", "24", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/24967/image_1024?unique=4ff1d7f"],
+            ["ENCENDEDOR B/C MAXI EXH. 1X15", "25", 6, "https://dulcilandia.com.ar/par/wp-content/uploads/sites/4/2020/06/50002308-1.png"],
+            ["GALLETA MARIA ROLLO 20*1*135", "20", 6, "https://lacolonia.vtexassets.com/arquivos/ids/189216-800-800?v=637122068774830000&width=800&height=800&aspect=true"],
+            ["SAL YODADA DOÑA MELY 454 GR", "25", 6, "https://drive.google.com/thumbnail?id=1tVA4olqRdhsyopcQ87dp8M7iVtdSIWYv"],
+            ["CORN FLAKES KELLOGGS", "16", 6, "https://www.kelloggs.es/content/dam/europe/kelloggs_es/images/our-brands/all-bran/cornflakes.png"],
+            ["COMIDA P/PERRO FIEL AMIGO ADULTO 44 LBS", "1", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5EjleLMbtQ_n8xyjqesV-yUVYg-OxwO0yCw&s"],
+            ["COMIDA P/PERRO FIEL AMIGO ADULTO 1*10 LBS", "10", 6, "https://walmartgt.vtexassets.com/arquivos/ids/886338/alimento-para-perro-fiel-amigo-1-lb-7401054304381.jpg?v=638948493416530000"],
+            ["COMIDA P/PERRO FIEL AMIGO CACHORRO 44 LBS", "1", 6, "https://d2wuoo4cuot0vy.cloudfront.net/1742-0001/1742-0001_1.jpg"],
+            ["COMIDA P/PERRO FIEL AMIGO CACHORRO 1*10 LBS", "10", 6, "https://dilimport.app/catalogo/uploads/DILIMPORT/productos/MFA04213.jpg"],
+            ["MANTECA PORTAL KILO 1*25", "25", 6, "https://lacoloniaqa.vteximg.com.br/arquivos/ids/169942-650-500/7423100000122_1.jpg?v=637079557022200000"],
+            ["ACEITE LIQUIDO 36LBS CLAVEL", "1", 6, "https://drive.google.com/thumbnail?id=1IGohFay3Mt3_VigCVEgw3EjuDaCyq7xq"],
+            ["FOSFOROS GATO NEGRO 10*50", "10", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/2732/image_1024?unique=963c901"],
+            ["NIEVE DE FRUTAS 15BLS*10PZS*85ML", "15", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/9631/image_1024?unique=63e2920"],
+            ["FRUTI JELLY 6 BLS DE 100 PIEZAS", "6", 6, "https://dulcerialaestrella.com.mx/cdn/shop/files/IMG_2949_8399b4e6-f3be-4d2c-adbb-e67451a5a782_480x480.png?v=1736052477"],
+            ["FRUTI JELLY 30 BLS DE 20 PIEZAS", "30", 6, "https://dulcerialaestrella.com.mx/cdn/shop/files/IMG_1896_5e5e61ea-5731-454b-8e67-e286ad442e95_1400x.png?v=1736052502"],
+            ["ESCOBA SUPER TINA KIKA 12*1", "12", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.product/1597/image_1024/%5B7415603222026%5D%20ESCOBA%20SUPER%20TINA-KIKA?unique=1544cd1"],
+            ["ESCOBA TITA", "12", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.product/11494/image_1024/%5B759364929365%5D%20ESCOBA%20SUPER%20TITA?unique=1544cd1"],
+            ["DESODORANTE GILLETTE 5PACK", "1", 6, "https://d31f1ehqijlcua.cloudfront.net/n/5/7/c/1/57c10671d2d6b3a0014b6a909e550379083289a5_Deodorants_507782_01.jpg"],
+            ["DEGREE DE HOMBRE 5PK", "15", 6, "https://d31f1ehqijlcua.cloudfront.net/n/5/1/c/5/51c54b8f9999c869afa7646a144e0491cc7fc0e8_Deodorant_29284_01.jpg"],
+            ["DEGREE DE MUJER 5 PK", "1", 6, "https://d31f1ehqijlcua.cloudfront.net/n/2/a/8/4/2a840d3a2fc71513d4d12225af739c046c09e5b1_Deodorant_484143_03.jpg"],
+            ["DESODORANTE OLD SPICE", "1", 6, "https://d31f1ehqijlcua.cloudfront.net/n/e/f/6/8/ef6855099d932131d35052e57d528098cfeafe1f_Deodorants_473158_01.JPG"],
+            ["CAFE MAYA 1LB 1*60", "60", 6, "https://walmarthn.vtexassets.com/arquivos/ids/726897/cafe-maya-molido-tradicional-312-gr-7421830790153.webp?v=638992264062730000"],
+            ["CAFE MAYA SELECTO 1*12*312.G", "30", 6, "https://walmarthn.vtexassets.com/arquivos/ids/736973/cafe-maya-mezcla-selecta-312-gr-7421830790122.webp?v=639017724018270000"],
+            ["CAFE ORO 1LB 1*60", "60", 6, "https://walmarthn.vtexassets.com/arquivos/ids/738024/cafe-oro-molido-324-g-7421800110189.webp?v=639021048019230000"],
+            ["CAFE REY 1LB 1*60", "60", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9Qukx2CWeJTBWi7gEqUwTITxhHF1vHBPoCA&s"],
+            ["DY VINAGRE CONDIMENTO GALON CAJA 6 UNIDADES.", "6", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/23983/image_1024?unique=b7db42c"],
+            ["DY SALSA BARBACOA GALON 6*1", "6", 6, "https://static.wixstatic.com/media/505350_1ae12437db9b4e05b66646b1e7bb9600~mv2.png/v1/fill/w_980,h_1506,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/505350_1ae12437db9b4e05b66646b1e7bb9600~mv2.png"],
+            ["DY SALSA DE TOMATE KETCHUP 6*1", "6", 6, "https://drive.google.com/thumbnail?id=1FE9F1GJSjqubmRY09Dv0EUX0wVR0qfY_"],
+            ["DY EMPANIZADOR 5*5Kg", "1", 6, "https://drive.google.com/thumbnail?id=17_vKVDg5h55HSsWKRRC9Gi5B7nIwU86n"],
+            ["KETCHUP SACHETS 1*5*200", "5", 6, "https://grupodonjuliohn.com/wp-content/uploads/2025/09/SACHET.webp"],
+            ["SOFRITO CRIOLLO 8*12*106 GRAMOS", "8", 6, "https://walmarthn.vtexassets.com/arquivos/ids/762949/sofrito-criollo-campofresco-87-g-7421001640201.webp?v=639090285311430000"],
+            ["SOFRITO RANCHERO 8*12*106GRS", "8", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/29675/image_1024?unique=ac897b4"],
+            ["PASTA NORMAL 8*12*4 ONZ", "8", 6, "https://walmarthn.vtexassets.com/arquivos/ids/762952/pasta-de-tomate-campofresco-87-g-7421001653393.webp?v=639090285368470000"],
+            ["PASTA NORMAL 24X 8ONZ", "24", 6, "https://walmarthn.vtexassets.com/arquivos/ids/755194/pasta-de-tomate-campofresco-174-g-7421001653409.webp?v=639065826053500000"],
+            ["KETCHUP BOTE PLASTICO 24*14ONZ", "24", 6, "https://static-files.bluexpace.com/hn/uploads/2025/11/A54860.webp"],
+            ["KETCHUP 8*12*4 ONZ", "8", 6, "https://walmarthn.vtexassets.com/arquivos/ids/706990-800-450?v=638932071114230000&width=800&height=450&aspect=true"],
+            ["KETCHUP BOTE PLASTICO 12*28ONZ", "12", 6, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/27977/image_1024?unique=eea23f0"],
+            ["MECHA DE TRAPEADOR CAMPANITA #20 1*12", "12", 6, "https://drive.google.com/thumbnail?id=1WLswsOcTzWJ5w985att2h5YZgmt38eFh"],
+            ["MECHAS DE TRAPEADOR SAPOLIO 400 GR #16", "12", 6, "https://drive.google.com/thumbnail?id=1W3s3kELrIDxohAE66YVCyc0YPedOlFgx"],
+
+
+            //---Papel y Servilletas---//
+            ["PAPEL NUBE BLANCA 1000H 24*1", "24", 11, "https://comprabien.net/wp-content/uploads/papel-Nube-Blnaca-individual-1000-hojas.jpg"],
+            ["PAPEL NUBE BLANCA 1000 12*4", "12", 11, "https://comprabien.net/wp-content/uploads/papel-Nube-blanca-4-rollos-por-1000.jpg"],
+            ["PAPEL HIGIENICO ROSAL VINO TINTO 24*1", "24", 11, "https://papelerainternacional.com/wp-content/uploads/2017/12/Rosal-vinotinto-1R.jpg"],
+            ["PAPEL HIGIENICO ROSAL VINO TINTO 12*4", "12", 11, "https://walmartsv.vtexassets.com/arquivos/ids/542630-800-450?v=638624378506200000&width=800&height=450&aspect=true"],
+            ["PAPEL HIGIENICO ROSAL NARANJA 24*1", "24", 11, "https://tienda.proconsumo.hn/image/cache/catalog/productos/2025/4019723-600x600.png"],
+            ["PAPEL HIGIENICO ROSAL NARANJA 4*12", "4", 11, "https://walmarthn.vtexassets.com/arquivos/ids/523238/4526_01.jpg?v=638664614098300000"],
+            ["PAPEL HIGIENICO ROSAL NARANJA 12*4", "12", 11, "https://lacolonia.vtexassets.com/arquivos/ids/251938/766324310828.jpg?v=638863096770600000"],
+            ["PAPEL HIGIENICO CARIÑOSO 1000 HOJAS INDIVIDUAL 1*24", "24", 11, "https://bodegahilvia.com/sistema/docs/products/IMG_5233.JPG"],
+            ["PAPEL HIGIENICO CARIÑOSO 8*6 1000 HOJAS", "8", 11, "https://lacolonia.vtexassets.com/arquivos/ids/253153/856038008224.jpg?v=638936567282300000"],
+            ["PAPEL HIGIENICO CARIÑOSO 12*4 1000 HOJAS", "12", 11, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyldGcIaBZogdwNAnXgDd_lydS6hxPxNE3-w&s"],
+            ["PAPEL HIGIENICO CARIÑOSO 1000 HOJAS 12 ROLLOS 4*12", "4", 11, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK6roAkP8qHM6u9BRSUhTx86u7Cvd33DGcLA&s"],
+            ["PH COLA BLANCA 1000H 24*1", "24", 11, "https://drive.google.com/thumbnail?id=1oVy_q0vDyQff9ZHPLHVeFQFMjX8IkPRb"],
+            ["PH ULTRAMAX 1000H 24*1", "24", 11, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyu4GyLkIDTD7ii3I1bD8mihV4XG9YuV5sug&s"],
+            ["PH ULTRAMAX 1000H 12*4", "12", 11, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShHVloWLLVaTT1Yp6eQ95l8sfYO7YABAl2Aw&s"],
+            ["PAPEL HIG. BINGO 1000 HJS 4 ROLLOS", "12", 11, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/38257/image_1024?unique=2eec6b8"],
+            ["PAPEL HIG. BINGO 1000HJS 1 ROLLO", "24", 11, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/38258/image_1024?unique=055b614"],
+            ["SERVILLETA FIESTA 500UND", "6", 11, "https://walmarthn.vtexassets.com/arquivos/ids/467666/27118_01.jpg?v=638615317287670000"],
+            ["SERVILLETA NUVE BLANCA 10*100", "10", 11, "https://lacolonia.vtexassets.com/arquivos/ids/251928-800-800?v=638863053089970000&width=800&height=800&aspect=true"],
+            ["TOALLA NUBE BLANCA 60H 24*1", "24", 11, "https://lacolonia.vtexassets.com/arquivos/ids/251929/766324303417.jpg?v=638863057609730000"],
+            ["PAPEL TOALLA FIESTA 100HJS", "12", 11, "https://walmarthn.vtexassets.com/arquivos/ids/372920/Toalla-Multiuso-Fiesta-Mega-Rollo-100Hd-1-24826.jpg?v=638425066280300000"],
+            ["SERVILLETA BINGO 100G", "10", 11, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/38448/image_1024?unique=6e7d256"],
+            ["SERVILLETA COOL CLEAN 1*10*100", "10", 11, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3762/image_1024?unique=bc14dff"],
+            
+            //---Pañales---//
+            ["PAÑAL QUERUBIN CH.", "4", 10, "https://superxtrapanama.vtexassets.com/arquivos/ids/197330-300-300?v=639041761689070000&width=300&height=300&aspect=true"],
+            ["PAÑAL QUERUBIN TALLA M (Fardo apaqx52unds)", "4", 10, "https://superxtrapanama.vtexassets.com/arquivos/ids/197332-300-300?v=639041773611330000&width=300&height=300&aspect=true"],
+            ["PAÑAL QUERUBIN TALLA G (Fardo 4paqx48unds)", "4", 10, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7Lde920T6C7b1Z8hC89c6k0mc5TvqxT8mpQ&s"],
+            ["PAÑAL QUERUBIN TALLA XG ( Fardo4paqx42unds)", "4", 10, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QQEQG9mCO_l546tGctuqVfoNVW0vXejWRQ&s"],
+            ["PAÑAL BABYSEC ULTRA CH 50UNID.", "4", 10, "https://www.babysec.com.hn/assets/uploads/product/image/163c5-fic-babysec-ultrasec-chx50_new-id2021_fab-mx-para-ca-min.jpg"],
+            ["PAÑAL BABYSEC ULTRA G 50UNID", "4", 10, "https://www.babysec.com.hn/assets/uploads/product/image/c1e9f-fic-babysec-ultrasec-gx50_new-id2021_fab-mx-para-ca-min.jpg"],
+            ["PAÑAL BABYSEC ULTRA M 50UNID", "4", 10, "https://www.babysec.com.hn/assets/uploads/product/image/7f9bd-fic-babysec-ultrasec-mx46_new-id2021_fab-mx-para-ca-min.jpg"],
+            ["PAÑAL BABYSEC ULTRA XG 50 UNID", "4", 10, "https://www.babysec.com.hn/assets/uploads/product/image/76620-fic-babysec-ultrasec-xgx36_new-id2021_fab-mx-para-ca-min.jpg"],
+            ["PAÑAL BABYSEC ULTRA XXG 44 UNIDA", "4", 10, "https://www.babysec.com.hn/assets/uploads/product/image/be1fb-fic-babysec-ultrasec-xxgx44_new-id2021_fab-mx-para-ca-min.jpg"],
+            ["PAÑAL SMARTY BABY CLASSIC M 50 UNID", "4", 10, "https://drive.google.com/thumbnail?id=1B-PX-eW-lnLE6-cB-Q4W0kjMvwG0gRFm"],
+            ["PAÑAL SMARTY BABY CLASSIC G 48 UNID", "4", 10, "https://drive.google.com/thumbnail?id=1BcVBoSf417l5Ne4h2LUwUSo1qeuamOyu"],
+            ["PAÑAL SMARTY BABY CLASSIC XG 46 UNID", "4", 10, "https://drive.google.com/thumbnail?id=1Dy42-B57ov7ETDwERpL-UAtqqD2gJgEg"],
+            ["PAÑAL SMARTY BABY CLASSIC XXG 40 UNID", "4", 10, "https://drive.google.com/thumbnail?id=1lwBOX0V8biPIWkJKxXDT90YGJ0mYSCi6"],
+            ["PAÑAL SMARTY BABY ULTRA M 50 UNID", "4", 10, "https://drive.google.com/thumbnail?id=1WELD1x7Z3_PqGAWDNHxMajRM0tPgwLUr"],
+            
+            //---Harinas--//
+            ["MASECA EXTRA SUAVE AMARILLA 410G", "20", 1, "https://drive.google.com/thumbnail?id=119vpCWuRW3NgzMJpkgvEUOIIhlAqBNjN"],
+            ["MASECA EXTRA SUAVE AMARILLA 820 G", "10", 1, "https://walmarthn.vtexassets.com/arquivos/ids/467301/22923_01.jpg?v=638615312155200000"],
+            ["MASECA EXTRA SUAVE 410 G", "20", 1, "https://static-files.bluexpace.com/hn/uploads/2025/11/A58945.webp"],
+            ["MASECA EXTRA SUAVE 820 G", "10", 1, "https://walmartni.vtexassets.com/arquivos/ids/339402/Harina-Maseca-De-Maiz-Extra-Suave-820gr-1-18907.jpg?v=638416862719200000"],
+            ["MASECA EXTRA SUAVE 22.5 LBS", "1", 1, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/2142/image_1024?unique=efe4c6a"],
+            ["HARINA DE MAIZ CAPITALINO AMARILLA 1LB", "20", 1, "https://drive.google.com/thumbnail?id="],
+            ["HARINA DE MAIZ CAPITALINO 1LB", "20", 1, "https://drive.google.com/thumbnail?id=1mxN09SJVjUY2L3jdTqD0YkGgeDVqdCgN"],
+            ["HARINA DE MAIZ CAPITALINO AMARILLA 2LBS", "10", 1, "https://drive.google.com/thumbnail?id=1VwxdNDzPod_a8ivx5pf3sU7QdufWL13_"],
+            ["HARINA DE MAIZ CAPITALINO 2LBS", "10", 1, "https://super-del-corral.myshopify.com/cdn/shop/products/7421435100234_1860x.jpg?v=1589305761"],
+            ["HARINA DE MAIZ CAPITALINA 22.5 LB", "1", 1, "https://drive.google.com/thumbnail?id=1SJUf31X3EHRY9okfzAnl3dx8cK25iqtQ"],
+            ["HARINA DE MAIZ CAPITALINA 50 LB", "1", 1, "https://drive.google.com/thumbnail?id=1FsmtgESh9ttwviB6F73Vvrt_EVXI5-ot"],
+            ["TORTIMASA 1 LIBRA", "20", 1, "https://walmartni.vtexassets.com/arquivos/ids/304875/Harina-Tortimasa-De-Maiz-410gr-1-22953.jpg?v=638315668832930000"],
+            ["TORTIMASA 2 LIBRAS", "10", 1, "https://superlacasita.com.gt/wp-content/uploads/2020/11/Harina-de-Maiz-Tortimasa-2-lb.jpg"],
+            ["TORTIMASA 25 LIBRAS", "1", 1, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3561/image_1024?unique=19f3ca8"],
+            ["TORTIMASA 50 LIBRAS", "1", 1, "https://drive.google.com/thumbnail?id="],
+            ["HARINA LA ROSA 400 G 25*1", "25", 1, "https://lacoloniaqa.vteximg.com.br/arquivos/ids/167607-650-500/Abarrotes-Harinas-Trigo_7421002410025_1.jpg?v=636988188773630000"],
+            
+            //---ARROZ---//
+            ["ARROZ TIA EMELY DE 350 GRS 1*25", "25", 2, "https://lacolonia.vtexassets.com/arquivos/ids/164268-800-800?v=636919266831370000&width=800&height=800&aspect=true"],
+            ["ARROZ TIA EMELY DE 1.75 KGS", "5", 2, "https://lacolonia.vtexassets.com/arquivos/ids/188618-800-800?v=637122066084270000&width=800&height=800&aspect=true"],
+            ["ARROZ TIA EMELY DE 8.75 KGS", "1", 2, "https://drive.google.com/thumbnail?id=1kG8wRPgGPZt4hVFnnYOPFeHXBxKPiKEg"],
+            ["ARROZ ORIGINAL RICE DE 100 LBS", "1", 2, "https://drive.google.com/thumbnail?id=1ROQV7JYwOYcau1Ub0D0VBT95L73OXkRT"],
+            ["ARROZ ORIGINAL RICE DE 25 LBS", "1", 2, "https://lacolonia.vteximg.com.br/arquivos/ids/188646-400-400/Abarrotes-Arroz-Arroz-Escaldado-y-Precocido_707517002441_1.jpg?v=637122066198370000"],
+            ["ARROZ ORIGINAL RICE DE 350 GRS", "25", 2, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi_Cx8DsFPJHLp1zX20Niq0quGgKFcTbExMw&s"],
+            ["ARROZ ORIGINAL RICE DE 1.75 GRS", "5", 2, "https://lacolonia.vtexassets.com/arquivos/ids/164273/Abarrotes-Arroz-Arroz-Escaldado-y-Precocido_707517002182_1.jpg?v=636919266864530000"],
+            ["ARROZ ORIGINAL RICE DE 1 LB", "25", 2, "https://drive.google.com/thumbnail?id=1XuXNaJpzgwpnLZ-d7pB_JJ0LdOHw85Hc"],
+            ["ARROZ SABROSITO VERDE DE 100 LBS", "1", 2, "https://drive.google.com/thumbnail?id=1DZ2I5hu7acg7sMlQMmTF6HWMA--YTegr"],
+            ["ARROZ PROGRESO DE 25*1 LB", "25", 2, "https://d31f1ehqijlcua.cloudfront.net/n/a/9/6/b/a96ba8f97ac02157d780c01777b5012de91d52b6_Rrice_207234_04.jpg"],
+            ["ARROZ PROGRESO DE 2 LBS", "10", 2, "https://drive.google.com/thumbnail?id=1rvFwIGlhEmksqhQ5qKm8KjPPHUj0o8gp"],
+            ["ARROZ PROGRESO DE 5*5 LBS", "5", 2, "https://super-del-corral.myshopify.com/cdn/shop/products/707517002007_2204x.jpg?v=1589382884"],
+            ["ARROZ PROGRESO DE 350 GMS", "25", 2, "https://drive.google.com/thumbnail?id=1t_nrzs_gtFnIfgSEu5vET66Q-uuDjxTx"],
+            ["ARROZ PROGRESO ESCALDADO 350 GMS", "25", 2, "https://lacoloniaqa.vteximg.com.br/arquivos/ids/167171-650-500/Abarrotes-Arroz-y-Frijoles-Arroz_707517002229_1.jpg?v=636988186689200000"],
+            ["ARROZ PROGRESO DE 25 LBS", "1", 2, "https://lacolonia.vtexassets.com/arquivos/ids/188625-800-800?v=637122066113470000&width=800&height=800&aspect=true"],
+            ["ARROZ PROGRESO DE 1.75 GRS", "5", 2, "https://lacolonia.vtexassets.com/arquivos/ids/188620/Abarrotes-Arroz-Arroz-Blanco_707517002083_1.jpg?v=637122066091930000"],
+            ["ARROZ PROGRESO 100 LB", "1", 2, "https://drive.google.com/thumbnail?id=10CcLPDbdflAPZJlzNFUbFbXkW_Hx10KL"],
+            
+            //---CIGARROS---//
+            ["CIGARRO MARLBORO FUSION 20SC", "1", 8, "https://latorremx.vtexassets.com/arquivos/ids/201855/2032305-frontal.jpg?v=639069505972500000"],
+            ["CIGARRO MARLBORO GOLD 20SC", "1", 8, "https://d31f1ehqijlcua.cloudfront.net/n/2/4/8/6/248620aad208c1887eb8a26cefb1f6b8096c766a_Tobacco_272007_06.jpg"],
+            ["CIGARRO MARLBORO GARDEN FUSION 20SC 100", "1", 8, "https://vapordom.com/wp-content/uploads/2024/05/509-532-06-1.png"],
+            ["CIGARRO MARLBORO RED. 20SC", "1", 8, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCsj4LFto2nZnWdV3JCZao5gsYm8B3tK24pQ&s"],
+            ["CIGARRO L&M FAST FWD 20SC", "1", 8, "https://vapordom.com/wp-content/uploads/2024/05/509-532-02-2-e1716597280376.png"],
+            ["CIGARRO L&M FORWARD 20SC", "1", 8, "https://d2j6dbq0eux0bg.cloudfront.net/images/92992546/products/637276823/5778024929.jpg"],
+            ["CIGARRO L&M SAMBA SPL 20SC", "1", 8, "https://www.super24.gt/on/demandware.static/-/Sites-root/es_GT/dwd27f258a/products/Tabacos/117581.png"],
+            ["CIGARRO L&M 20SC", "1", 8, "https://d2j6dbq0eux0bg.cloudfront.net/images/92992546/products/637276803/5778024935.jpg"],
+
+            //---DESCECHABLES--//
+            ["BANDEJA 1P 1*10", "10", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNAnqc43LtsxMU7S7UbtFJPOWIQQd9KrLGFQ&s"],
+            ["TAQUERA 1.5 1*10", "10", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThGpkpoCxbILY481eWcQKqd_pFnzPFPf6sKw&s"],
+            ["BANDEJA 2P SUPER FOM M/N 10*50", "10", 9, "https://super-del-corral.myshopify.com/cdn/shop/products/763910002181_700x.jpg?v=1668102677"],
+            ["CONTENEDOR 5*5*80 TRASLUCIDO", "5", 9, "https://desechablesla.com/wp-content/uploads/2021/03/DART-5X5-CLEAR-HINGED-CONTAINER.jpg"],
+            ["CONTENEDOR 7*7 C/DIVISION 4*50", "4", 9, "https://www.abastotal.com/web/image/product.image/528/image_1024/Contenedor%207X7%20con%20Divisi%C3%B3n%20c-50?unique=d361b56"],
+            ["CONTENEDOR 7*7 S/DIVISION 4*5", "4", 9, "https://eracomercializadora.com.mx/wp-content/uploads/2023/06/REY7CH0025.jpg"],
+            ["CONTENEDOR 8*8 C/ DIVISION 4*50", "4", 9, "https://www.sgproveedores.com.mx/wp-content/uploads/2024/04/contenedor-termico-8x8-division-reyma-D_NQ_NP_795397-MLM25633769702_052017-Q-jpg.webp"],
+            ["CONTENEDOR 8*8 S/DIVISION 4*50", "4", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZY2t9TLjUO0HppQ3IgWNa8D86CW7AVfDXOg&s"],
+            ["CONTENEDOR 9*9 C/DIVISION 4*50", "4", 9, "https://www.sgproveedores.com.mx/wp-content/uploads/2024/04/contenedor-termico-8x8-division-reyma-D_NQ_NP_795397-MLM25633769702_052017-Q-jpg.webp"],
+            ["CONTENEDOR 9*9 S/DIVISION 4*50", "4", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZY2t9TLjUO0HppQ3IgWNa8D86CW7AVfDXOg&s"],
+            ["CUCHARA PEQUEÑA DYNAPACK JW LYNER 1*40*25", "40", 9, "https://lacolonia.vtexassets.com/arquivos/ids/220446/Cuidado-Hogar-Desechables-de-Hogar-y-Fiesta-Cubiertos-_763910000101_1.jpg?v=637183475120600000"],
+            ["CUCHARA PEQUEÑA PLASTIVAL LYNER 1*20*50", "20", 9, "https://walmarthn.vtexassets.com/arquivos/ids/175095/Cuchara-Dsechable-Plastival-Pequena-50Un-1-9635.jpg?v=637667674100500000"],
+            ["CUCHARA SOPERA PLASTIVAL LYNER 1*40*25", "40", 9, "https://walmarthn.vtexassets.com/arquivos/ids/176369/Cuchara-Plastival-Sopera-Desechable-25-Unidades-1-4479.jpg?v=637672414098930000"],
+            ["HAMBURGUESERA FOMPAC 1*4", "4", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpVaR8koZpIJDaWnXbApBKyXyZEGDQM-twFw&s"],
+            ["CUCHARA SOPERA PS DYNAPACK XL BCO 1*40*25", "40", 9, "https://dilimport.app/foodservice/panel/uploads/productos/SE75010.jpg"],
+            ["PAJILLA FORRADA DSTRAWS 1*24*500", "24", 9, "https://dilimport.app/catalogo/uploads/DILIMPORT/productos/PE00250.jpg"],
+            ["PAJILLA LISA LYNER ARCOIRIS 1*30*50", "30", 9, "https://dilimport.app/foodservice/panel/uploads/productos/DAR0248804.jpg"],
+            ["PLATO #6 SUPER FOM 20*25", "20", 9, "https://static-files.bluexpace.com/hn/uploads/2025/06/A55599.webp"],
+            ["PLATO #7 SUPER FOM 20*25", "20", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/28166/image_1024?unique=e7a3a95"],
+            ["PLATO #7 DYNAPACK BLANCO 40*25", "40", 9, "https://walmarthn.vtexassets.com/arquivos/ids/227077/Plato-Dyna-Pack-Desechable-N7-25-Unidades-1-4489.jpg?v=637862495689170000"],
+            ["PLATO #8 DYNAPACK BLANCO 40*25", "40", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfdP1kJG6rKOFI8JBWbYIinJz_AoGzIMcYqA&s"],
+            ["PLATO #8 SUPER FOM 20*25", "20", 9, "https://bodegahilvia.com/sistema/docs/products/20200805223345.JPG"],
+            ["PLATO #9 DYNAPACK BLANCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3981/image_1024?unique=67d35b6"],
+            ["PLATO #9 SUPERFOM C/DIVISION 20*25", "20", 9, "https://autopulpe.com/cdn/shop/files/rn-image_picker_lib_temp_030cc330-2569-45e2-91fd-62a8c3f97de4_611x.png?v=1693501721"],
+            ["PLATO #9 SUPERFOM S/DIVISION 20*25", "20", 9, "https://dilimport.app/catalogo/uploads/DILIMPORT/productos/DAR0002123.02.2022.jpg"],
+            ["PLATO #6 HONDO SUPER FOM 20*25", "20", 9, "https://lamonjaras.com/admin/storage/products/WhatsApp_Image_2020-07-06_at_10.11.25_AM_2.jpeg"],
+            ["PLATO #6 DYNAPACK BLANCO 40*25", "40", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHr4nnJwLHE6fsRZeIZFtB1vxX7UU9PCeG7Q&s"],
+            ["SOPERA 32 ONZ DART CON TAPADERA", "20", 9, "https://static.wixstatic.com/media/458240_a6f567f7a71944f0a5a0d9e715b98bb1~mv2.png/v1/fill/w_480,h_480,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/458240_a6f567f7a71944f0a5a0d9e715b98bb1~mv2.png"],
+            ["TENEDOR  PEQUEÑO PLASTIVAL LYNER JW  1*20*50", "20", 9, "https://lacolonia.vtexassets.com/arquivos/ids/192396-800-800?v=637127068944330000&width=800&height=800&aspect=true"],
+            ["TENEDOR GRANDE DYNAPACK 1*40*25", "40", 9, "https://autopulpe.com/cdn/shop/products/PhotoRoom-20220105_163606_530x@2x.png?v=1641422181"],
+            ["TENEDOR GRANDE PLASTIVAL LYNER JW *1*40*25", "40", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN4t5TbN7_ZrqA5UlavRTf03xPQnSdrOXovw&s"],
+            ["TENEDOR XL DYNAPACK BCO C-40*25", "40", 9, "https://drive.google.com/thumbnail?id=1FG6BNWux70w460wyIjv8_uPVirkhwwLa"],
+            ["TENEDOR PEQUEÑO DYNAPACK JW LYNER 1*40*25", "40", 9, "https://lacolonia.vteximg.com.br/arquivos/ids/220448-400-400/Cuidado-Hogar-Desechables-de-Hogar-y-Fiesta-Cubiertos-_763910000118_1.jpg?v=637183475130770000"],
+            ["VASO #10 DYNAPACK PP BLANCO 40*25", "40", 9, "https://lacolonia.vtexassets.com/arquivos/ids/192460/cara-Cuidado-Hogar-Desechables-de-Hogar-y-Fiesta-Vasos_763910013101_1.jpg?v=637127069253230000"],
+            ["VASO 10 PLASTIVAL VERDE 20X50", "20", 9, "https://cdnx.jumpseller.com/akipack/image/72078276/resize/255/255?1768918767"],
+            ["VASO 10 PLASTIVAL ROJO 20X50", "20", 9, "https://cdnx.jumpseller.com/fiestayregalos/image/6946682/thumb/719/719?1741206417"],
+            ["VASO #6 POLYCUPS BCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/15358/image_1024?unique=e7a3a95"],
+            ["VASO #8 PLASTIVAL PP CELESTE 20*50", "20", 9, "https://cdnx.jumpseller.com/fiestayregalos/image/6945552/thumb/719/719?1741206327"],
+            ["VASO #8 POLYCUPS BCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3809/image_1024?unique=e7a3a95"],
+            ["VASO #10 PLASTIVAL PP BLANCO 20*50", "20", 9, "https://walmarthn.vtexassets.com/arquivos/ids/225956/Vasos-Plastival-Desechables-50-Unidades-10oz-1-9636.jpg?v=637858929735400000"],
+            ["VASO #10 POLYCUPS BCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3810/image_1024?unique=e7a3a95"],
+            ["VASO # 10 PP BLUE BCO", "20", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3988/image_1024?unique=352cf7d"],
+            ["VASO #12 DYNAPACK PP BLANCO 40*25", "40", 9, "https://lacolonia.vtexassets.com/arquivos/ids/192462-800-800?v=637127069263230000&width=800&height=800&aspect=true"],
+            ["VASO #12 POLYCUPS BCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/32794/image_1024?unique=4a1d886"],
+            ["VASO #14 DYNAPACK BLANCO 40*25", "40", 9, "https://lacolonia.vteximg.com.br/arquivos/ids/168785-400-400/763910013149_1.jpg?v=637088179940770000"],
+            ["VASO #16 DYNAPACK PP BLANCO 40*25", "40", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.product/920/image_1024/%5B763910013163%5D%20VASO%20DYNA%20PACK%20N.%2016%2025%20UN?unique=6f5ebf1"],
+            ["VASO #16 FRUTAS CON TAPADERA 1*20*50", "20", 9, "https://www.mmagdistribuidora.com/cdn/shop/files/frutado16oz.png?v=1722028634"],
+            ["VASO CARTON #16OZ FRUTERO 20*50", "20", 9, "https://www.mmagdistribuidora.com/cdn/shop/files/frutado16oz.png?v=1722028634"],
+            ["VASO # 20 FRUTA 1*20/21/22/CON TAPADERA", "20", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3684/image_1024?unique=ada45ff"],
+            ["VASO #16 PLASTIVAL PP BLANCO 20*50", "20", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.product/924/image_1024/%5B763910014160%5D%20VASO%2016%20PLASTIVAL%2050U?unique=6f5ebf1"],
+            ["VASO #16 POLYCUPS BCO 25*20", "25", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/2909/image_1024?unique=e7a3a95"],
+            ["VASO #5 DYNAPACK PP BLANCO 120*25", "120", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3985/image_1024?unique=e7a3a95"],
+            ["VASO #5 PLASTIVAL PP BLANCO 60*50", "60", 9, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3807/image_1024?unique=e7a3a95"],
+            ["VASO #8 PLASTIVAL PP AMARILLO 20*50", "20", 9, "https://walmarthn.vtexassets.com/arquivos/ids/175094/Vaso-Plastival-Dese-N8-De-Colore-50-Unidades-1-9630.jpg?v=637667674094100000"],
+            ["VASO #8 PLASTIVAL PP ROSADO 20*50", "20", 9, "https://cdnx.jumpseller.com/akipack/image/72438500/resize/560/560?1769602257"],
+            ["VASO CERVECERO PP TRASLUCIDO", "20", 9, "https://cotillonchirimbolos.com/wp-content/uploads/2022/10/vaso-cervecero.png"],
+            ["VASO #7 PLASTIVAL PP BLANCO 50*50", "50", 9, "https://super-del-corral.myshopify.com/cdn/shop/products/7423382500112_600x.jpg?v=1659134904"],
+            ["VASO #7 BLUE PP BLANCO 50*50", "50", 9, "https://bodegahilvia.com/sistema/docs/products/IMG_5291%20(2).JPG"],
+            ["VASO #12 PLASTIVAL PP BLANCO 20*50", "20", 9, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFRSr3JsTL5pZHYFSfnAsAaG1_fbb88rWAng&s"],
+            ["VASO #14 PLASTIVAL PP BLANCO 20*50", "20", 9, "https://lacolonia.vtexassets.com/arquivos/ids/220452/Cuidado-Hogar-Desechables-de-Hogar-y-Fiesta-Vasos-_763910014146_1.jpg?v=637183475147170000"],
+            ["COPITA SOUFFLE 4 OZ PET DYNA CON TAPADERA 20*124", "25", 9, "https://mychocolatisimo.com/cdn/shop/files/D632002A.png?v=1770666055&width=1080"],
+            ["COPITA SOUFFLE 2 OZ PET DYNA CON TAPADERA 20*125", "20", 9, "https://mychocolatisimo.com/cdn/shop/files/D632002A.png?v=1770666055&width=1080"],
+            ["VASO # 12/14 PET DYNA TRASLUCIDO CON TAPADERA 20*50", "20", 9, "https://insumosrestaurantes.com/wp-content/uploads/2025/06/Sin-titulo-1-scaled.png"],
+            ["VASO # 20 PET DYNA TRASLUCIDO CON TAPADERA 20*50", "20", 9, "https://insumosrestaurantes.com/wp-content/uploads/2025/06/Sin-titulo-1-scaled.png"],
+            ["VASO # 16 GRANITA PP TRASLUCIDO CON TAPADERA 10*50", "20", 9, "https://dilimport.app/foodservice/panel/uploads/productos/EP02555.jpg"],
+            ["VASO 12 PLASTIVAL TRASLUCIDO 20X50", "20", 9, "https://walmarthn.vtexassets.com/arquivos/ids/272500/Vaso-Plastival-Desechables-12-Oz-50-Unidades-1-9634.jpg?v=638067262150070000"],
+            ["VASO 14 PLASTIVAL TRASLUCIDO 20X50", "20", 9, "https://www.therestaurantsupplyking.com/cdn/shop/files/14oz.ClearPETPlasticColdCup_98mm-1000pcs.webp?v=1737598376"],
+            ["VASO 16 PLASTIVAL TRASLUCIDO 20X50", "20", 9, "https://futuriplast.com/wp-content/uploads/2020/07/V16TR-1.jpg"],
+            ["VASO #06ONZ C/TAPADERA B/C GEN CAFE BELEN 20X50 UND", "20", 9, "https://empaquesbelen.com/belen/wp-content/uploads/2016/11/Vasos-VR3.webp"],
+            ["VASO #6OZ C/A C/TAPADERA CAFE BELEN 40X25", "40", 9, "https://empaquesbelen.com/belen/wp-content/uploads/2016/11/Vasos-VR3.webp"],
+            ["VASO #8OZ CON TAPADERA BELEN S/A 20X50", "20", 9, "https://empaquesbelen.com/belen/wp-content/uploads/2016/11/Vasos-VR3.webp"],
+            ["VASO #8OZ BLANCO LOCAL S/A C/TAPADERA 20X50UND", "20", 9, "https://empaquesbelen.com/belen/wp-content/uploads/2016/11/Vasos-Blancos.webp"],
+            ["VASO #16OZ GEN.FRUTAS AMA LOCAL C/TAPADERA 20X50UND", "20", 9, "https://dilimportexpress.com/2765-large_default/vaso-carton-frutas-no16-50-unds.jpg"],
+            ["VASO #21OZ GEN.FRUTAS AMA LOCAL C/TAPADERA 24X50UND", "20", 9, "https://dilimportexpress.com/2765-large_default/vaso-carton-frutas-no16-50-unds.jpg"],
+            ["VASO # 20 FRUTA 1*20/21/22/CON TAPADERA", "20", 9, "https://dilimportexpress.com/2765-large_default/vaso-carton-frutas-no16-50-unds.jpg"],
+            ["VASO 4.5OZ CONICO BLANCO G90 REV 25X200UND", "25", 9, "https://eurofresh.com.pa/wp-content/uploads/2025/04/Vasos-Conicos-Mix.png"],
+            ["SOGA TORO C/NEGRO", "1", 9, "https://drive.google.com/thumbnail?id=1-KFiLW6Tr-BESnj6pcbf6wHkYSA9m_hW"],
+            ["BANDEJA 2P FOMI SUR 1*10", "10", 9, "https://super-del-corral.myshopify.com/cdn/shop/products/763910002181_700x.jpg?v=1668102677"],
+            ["BANDEJA 6X6 HAMBURGUESERA FOMI SUR 1*4", "4", 9, "https://foodplanet.mx/wp-content/uploads/2024/10/Contenedor-6x6-1.png"],
+            ["BANDEJA 7X7 C/D FOMI SUR 1*4", "4", 9, "https://super-del-corral.myshopify.com/cdn/shop/products/763910002150_700x.jpg?v=1668635278"],
+            ["BANDEJA 7X7 S/D FOMI SUR 1*4", "4", 9, "https://basicos.mayoreoenlinea.mx/cdn/shop/files/7502208804228.png?v=1747503171"],
+            ["BANDEJA 8X8 C/D FOMI SUR 1*4", "4", 9, "https://super-del-corral.myshopify.com/cdn/shop/products/763910002150_700x.jpg?v=1668635278"],
+            ["BANDEJA 8X8 S/D FOMI SUR 1*4", "4", 9, "https://basicos.mayoreoenlinea.mx/cdn/shop/files/7502208804228.png?v=1747503171"],
+            ["PLATO #6 FOMI SUR 1*20", "20", 9, "https://plastifar.com/es/wp-content/uploads/sites/3/2017/10/12581-Plato-no.-10.png"],
+            ["PLATO #8 FOMI SUR 1*20", "20", 9, "https://plastifar.com/es/wp-content/uploads/sites/3/2017/10/12581-Plato-no.-10.png"],
+            ["PLATO #9 FOMI SUR 1*20", "20", 9, "https://plastifar.com/es/wp-content/uploads/sites/3/2017/10/12581-Plato-no.-10.png"],
+            ["PLATO #7 FOMI SUR 1*20", "20", 9, "https://plastifar.com/es/wp-content/uploads/sites/3/2017/10/12581-Plato-no.-10.png"],
+            ["BANDEJA ALUMINIO P/PAVO ELMIGO", "50", 9, "https://drive.google.com/thumbnail?id=1iJW41HlUFaqs92g-XjAqq_x8EOa0wI_C"],
+            ["BANDEJA ALUMINIO P/PIERNA ELMIGO", "50", 9, "https://drive.google.com/thumbnail?id=1qYjPRM3wemh3koiwNGzHDbtnY6JTUOta"],
+            ["BANDEJA ALUMINIO P/POLLO ELMIGO", "100", 9, "https://drive.google.com/thumbnail?id=1-OWQ1Uyg8UhKBhFb0HNTsx90_swywXYy"],
+
+            //---BOLSAS---//
+            ["BOLSA CAMISETA 7*14 PEQUEÑA (FARDO)", "50", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbkiUDsX8FqUC37CwKXbDlht3ueFIjjkJNIA&s"],
+            ["BOLSA CAMISETA 9*18 MEDIANA (FARDO)", "50", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbkiUDsX8FqUC37CwKXbDlht3ueFIjjkJNIA&s"],
+            ["BOLSA CAMISETA 12*22 GRANDE(FARDO)", "50", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbkiUDsX8FqUC37CwKXbDlht3ueFIjjkJNIA&s"],
+            ["BOLSA CAMISETA COLOR NEGRO 7*14 PEQUEÑA (FARDO)", "50", 6, "https://acdn-us.mitiendanube.com/stores/006/104/650/products/009-1-88043a277463f66e6517495705339727-1024-1024.jpg"],
+            ["BOLSA CAMISETA COLOR NEGRO 9*18 MEDIANA (FARDO)", "50", 6, "https://acdn-us.mitiendanube.com/stores/006/104/650/products/009-1-88043a277463f66e6517495705339727-1024-1024.jpg"],
+            ["BOLSA CAMISETA COLOR NEGRO 12*22 GRANDE (FARDO)", "50", 6, "https://acdn-us.mitiendanube.com/stores/006/104/650/products/009-1-88043a277463f66e6517495705339727-1024-1024.jpg"],
+            ["BOLSA CAMISETA  ( GRANDE,MEDIANA Y PEQUEÑA) POR LIBRA", "50", 6, "https://drive.google.com/thumbnail?id=1cJRtd3Kgu8ANwDWEBt2Jwu9Jd-BeK4Zp"],
+            ["BOLSA EN ROLLO JARDIN 36*55 1*40", "40", 6, "https://d2wuoo4cuot0vy.cloudfront.net/1014-0056/1014-0056_1.jpg"],
+            ["BOLSA EN ROLLO PARA BASURA NEGRO 23*32", "30", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Negra-Grande-Premium-24x32-50uni.png"],
+            ["BOLSA LISA 12*18", "100", 6, "https://d2wuoo4cuot0vy.cloudfront.net/1014-0066/1014-0066_1.jpg"],
+            ["BOLSA LISA 15*25", "100", 6, "https://d2wuoo4cuot0vy.cloudfront.net/1014-0064/1014-0064_1.jpg"],
+            ["BOLSA LISA 4*8", "100", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Lisa-4x8-1.png"],
+            ["BOLSA LISA 5*11", "100", 6, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4vRz-jcCncM2xv1B9k9heoQbRwdStSgCj6Q&s"],
+            ["BOLSA LISA 6*10", "100", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Lisa-6x10-2.png"],
+            ["BOLSA LISA 6*12", "100", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Lisa-6x12-1.png"],
+            ["BOLSA LISA 7*14", "100", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Lisa-7x14-1.png"],
+            ["BOLSA LISA 9*16", "100", 6, "https://alfapack.hn/wp-content/uploads/2024/06/Bolsa-Lisa-9x16-1.png"],
+            ["BOLSA P/BASURA ROLLO DEL JARDIN VANGUARDIA", "40", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bbr/6.jpg"],
+            ["BOLSA CAMISETA GDE AD 11X19 VANGUARDIA", "50", 6, "https://vanguardiahn.com/sitio/images/productos/stock/btc/3.jpg"],
+            ["BOLSA CAMISETA JUMBITO VANGUARDIA", "50", 6, "https://vanguardiahn.com/sitio/images/productos/stock/btc/4.jpg"],
+            ["BOLSA CAMISETA MED AD VANGUARDIA", "60", 6, "https://vanguardiahn.com/sitio/images/productos/stock/btc/2.jpg"],
+            ["BOLSA CAMISETA PIGMENTADA AD PEQ VANGUARDIA", "60", 6, "https://vanguardiahn.com/sitio/images/productos/stock/btc/1.jpg"],
+            ["BOLSA LISA 12X18 VANGUARDIA 1/2 LB", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/6.jpg"],
+            ["BOLSA LISA 15X25 VANGUARDIA 1/2", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/7.jpg"],
+            ["BOLSA LISA 5X11 VANGUARDIA 1/2LB", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/9.jpg"],
+            ["BOLSA LISA 6X10 VANGUARDIA 1/2 LB.", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/10.jpg"],
+            ["BOLSA LISA 6X12 VANGUARDIA 1/2LB", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/11.jpg"],
+            ["BOLSA LISA 7X14 VANGUARDIA 1/2LB", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/13.jpg"],
+            ["BOLSA LISA 9X16 VANGUARDIA 1/2 LB", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bud/5.jpg"],
+            ["BOLSA P/BASURA AD NEGRA DEL TORO VANGUARDIA", "100", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bbp/2.jpg"],
+            ["BOLSA P/BASURA ROLLO DE HOGAR 50UDS 23X32 VANGUARDIA", "30", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bbr/3.jpg"],
+            ["BOLSA P/BASURA ROLLO FRAGANCIA VANGUARDIA", "70", 6, "https://vanguardiahn.com/sitio/images/productos/stock/bbr/1.jpg"],
+
+            //---PASTAS---//
+            ["SPAGUETTI MI PASTA 60*200G", "60", 3, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/3582/image_1024?unique=1117f5e"],
+            ["CODITO MI PASTA 1*48*200G", "48", 3, "https://media.larachycia.com/800x800/media/items/83050003.webp"],
+            ["CARACOLITO MI PASTA 1*48*200G", "48", 3, "https://media.larachycia.com/800x800/media/items/83050002.webp"],
+            ["TORNILLITO MI PASTA 48*200G", "48", 3, "https://molinoharinerosula.com/wp-content/uploads/2023/11/Tornillo-200g.jpg"],
+            ["MARMAHON MI PASTA 48*200G", "48", 3, "https://molinoharinerosula.com/wp-content/uploads/2023/11/Marmahon-200g.jpg"],
+            ["FIDEO PARA CHAO MEIN INA", "36", 3, "https://walmarthn.vtexassets.com/arquivos/ids/659360/4283_02.jpg?v=638833905061500000"],
+            ["CARACOLITO INA 200G", "48", 3, "https://cocinaconina.com/media/2021/08/Carcolito-Small.png"],
+            ["CODITO MEDIANO INA 200G", "48", 3, "https://cocinaconina.com/media/2021/08/Codito-Small.png"],
+
+            //---BEBIDAS---//
+            ["AGUA MEMBER SELECTION 500 ML", "40", 4, "https://d31f1ehqijlcua.cloudfront.net/n/8/1/6/0/8160b4da3df4f68182cafe8cb2ad4b29fa7962db_Water_501862_04.jpg"],
+            ["D-DM JUGO CLARIFICADO ARANDANO 1 LITRO", "12", 4, "https://drive.google.com/thumbnail?id=1irkPy7HDZyfyaqaqXl6vxVcYt6AyoxaP"],
+            ["JUGO CRAMBERRY 2.83 lt", "6", 4, "https://drive.google.com/thumbnail?id=12-stwFtSkJQYHhSfhOsTZrk14rBvYUOV"],
+            ["QUARTZ GINGER ALE 355ML", "24", 4, "https://drive.google.com/thumbnail?id=1O8q5FpFAzzlmqLmjGZtCoQIoqZ7sd6Z2"],
+            ["QUARTZ MINERAL LATA 355ML", "24", 4, "https://drive.google.com/thumbnail?id=1FpSTOMLINM8c5w0x8OfLUN0KoqmHUX-D"],
+            ["JUGOS YA DURAZNO 10*15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/512919/28210_01.jpg?v=638660202103770000"],
+            ["JUGOS YA FRESA 10*15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/513035-800-450?v=638660205756670000&width=800&height=450&aspect=true"],
+            ["JUGOS YA LIMON 10*15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/340333/Bebida-En-Polvo-Jugosya-Limon-18-Gr-1-33895.jpg?v=638376576130770000"],
+            ["JUGOS YA MANGO 10*15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/350344/Jugo-de-Mango-Ya-18gr-1-29580.jpg?v=638415349803800000"],
+            ["JUGOS YA NARANJA 10X15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/512822-800-450?v=638660199821700000&width=800&height=450&aspect=true"],
+            ["JUGOS YA PIÑA 10*15", "10", 4, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQezvxIlHY3C2VP2ensVrGwbNB4ZH8KF134kA&s"],
+            ["JUGOS YA HORCHATA 10*15", "10", 4, "https://walmarthn.vtexassets.com/arquivos/ids/512914/27993_01.jpg?v=638660202079730000"],
+            ["FURY GOLD PET 500 ML 1*12", "12", 4, "https://walmarthn.vtexassets.com/arquivos/ids/347437/Bebida-Energizante-Fury-Energy-Petite-500ml-2-5082.jpg?v=638407245728370000"],
+            ["ADRENALINE RUSH 10.5 ONZAS", "24", 4, "https://super-del-corral.myshopify.com/cdn/shop/products/7401005907753_570x.jpg?v=1640634626"],
+            ["ADRENALINE RUSH 473 ML", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/703978/7877_01.jpg?v=638923557172230000"],
+            ["ENERGIZANTE AMP 600 ML PET", "12", 4, "https://walmartni.vtexassets.com/arquivos/ids/339324/Bebida-Energizante-Amp-365-Pet-Botella-600ml-1-6142.jpg?v=638416862235470000"],
+            ["ENERGIZANTE AMP 12 ONZAS PET", "12", 4, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/20799/image_1024?unique=1f7fb0e"],
+            ["RED BULL 250ML", "24", 4, "https://a.storyblok.com/f/287059/528x1348/3f07516a66/mx_ed_250ml_energy-drink_country_rgb__cold_closed_front_com_full.png"],
+            ["220 ENERGY DRINK LATA 473ML", "24", 4, "https://drive.google.com/thumbnail?id=1fyUkwz9TElg9dK_HtKVobPPo-8x66rbu"],
+            ["220 ENERGY DRINK LATA 355ML", "24", 4, "https://drive.google.com/thumbnail?id=1ZcHiOGAEnglIOMx1JqVptx8wKcWCw1sW"],
+            ["JUGO PETIT MANZANA LATA", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/368621/Nectar-Petit-Manzana-Lata-330ml-1-1305.jpg?v=638423340887030000"],
+            ["JUGO PETIT PERA LATA", "24", 4, "https://www.supermaxonline.com/images_products/146167.jpg"],
+            ["JUGO PETIT DURAZNO LATA", "24", 4, "https://walmartsv.vtexassets.com/arquivos/ids/405087/Nectar-Petit-Durazno-Lata-330ml-1-13473.jpg?v=638423890374400000"],
+            ["ALOE ALCOSA 500 ML PREMIUN", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/378333/Jugo-de-Sabila-Alcosa-500ml-1-32001.jpg?v=638442780317970000"],
+            ["ALOE 24/7 500 ML", "24", 4, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlTJOmSBEvWNTIsqLGvItzCWWxCIQ0cySdCQ&s"],
+            ["PEPSI 3 LITROS PET", "6", 4, "https://walmarthn.vtexassets.com/arquivos/ids/172055/Gaseosa-Pepsi-3000Ml-1-9103.jpg?v=637666371714000000"],
+            ["PEPSI 2 LITROS PET", "8", 4, "https://walmarthn.vtexassets.com/arquivos/ids/356309/2-Pack-Pepsi-Gaseosa-2-Litros-1-9095.jpg?v=638417189981000000"],
+            ["PEPSI 1.5 LT PET", "12", 4, "https://walmarthn.vtexassets.com/arquivos/ids/537657/9096_01.jpg?v=638678512442830000"],
+            ["PEPSI 1.25 LITROS PET", "12", 4, "https://d31f1ehqijlcua.cloudfront.net/n/3/3/4/3/33431e7f98ae1dd9beccd287f1af2ffb968f4506_SoftsDrinks_434427_06.jpg"],
+            ["PEPSI 600 ML PET", "12", 4, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0V4_EOL7yeBg7VqFOsoqnIuKbCH04VMfwoA&s"],
+            ["PEPSI 12 ONZ PET", "12", 4, "https://d31f1ehqijlcua.cloudfront.net/n/c/2/e/6/c2e65eb897cc560681bf003104f8af6991b28969_SoftDrinks_452083_01.jpg"],
+            ["PEPSI LATA 12 ONZAS", "24", 4, "https://puntofarmafiles.s3.eu-central-1.amazonaws.com/folder/products/500X500/REFRESCO-PEPSI-Lata-X-12-oz_8a32a62.jpg"],
+            ["PEPSI LATA 8 ONZAS", "24", 4, "https://lacolonia.vtexassets.com/arquivos/ids/252768-1200-auto?v=638917502552600000&width=1200&height=auto&aspect=true"],
+            ["SEVEN UP LATA 12 ONZAS", "24", 4, "https://lacolonia.vtexassets.com/arquivos/ids/252652-800-800?v=638900990795600000&width=800&height=800&aspect=true"],
+            ["BANANA TROPICAL 2 PET6", "6", 4, "https://www.cerveceriahondurena.com/sites/g/files/seuoyk1316/files/2023-07/19%20Banana%20Tropical%20PET%202L.png"],
+            ["BANANA TROPICAL 500ML", "12", 4, "https://www.coca-cola.com/content/dam/onexp/hn/es/brands/tropical/tropical_banana500ml.png"],
+            ["BANANA TROPICAL 1.5", "6", 4, "https://www.cerveceriahondurena.com/sites/g/files/seuoyk1316/files/2023-07/16%20Banana%20Tropical%20PET%201.5L.png"],
+            ["BANANA TOPICAL 3L 1*6", "6", 4, "https://www.cerveceriahondurena.com/sites/g/files/seuoyk1316/files/2023-07/22%20Banana%20Tropical%20PET%203L.png"],
+            ["GATORADE BERRY BLUE24/600 M", "24", 4, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp00KaMaL3IqxzoRHokV9Jk0KNTXNK82vPcg&s"],
+            ["GATORADE FIERCE MELON 24/600", "24", 4, "https://fedlinsupermarket.com/cdn/shop/products/image_a45033f5-a402-4a4d-82a1-8035ff0e1ee0_1024x.png?v=1653771795"],
+            ["GATORADE FRUIT PUNCH 600 ML", "24", 4, "https://static-files.bluexpace.com/hn/uploads/2021/03/A59183.webp"],
+            ["GATORADE LIMA 600 ML", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/354503/Bebida-Gatorade-Hidratante-Sabor-A-Lima-Limon-600ml-1-1527.jpg?v=638417083188330000"],
+            ["GATORADE NARANJA 600 ML SPOR", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/546334/1525_01.jpg?v=638690313857300000"],
+            ["GATORADE UVA 600 ML SPOR", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/511218/1524_02.jpg?v=638660161299170000"],
+            ["MORA UVA CALIFOR 500 ML PET", "24", 4, "https://lacolonia.vtexassets.com/arquivos/ids/191275-800-800?v=637124493484470000&width=800&height=800&aspect=true"],
+            ["KIWI FRESA CALIFOR 500 ML PET", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/350148/Bebida-California-Kiwi-Fresa-500ml-1-8571.jpg?v=638415348797730000"],
+            ["PIÑA COCO CALIFOR 500 ML PET", "24", 4, "https://walmartni.vtexassets.com/arquivos/ids/358517/Jugo-California-Nectar-De-Pi-a-Y-Coco-400ml-1-6721.jpg?v=638423781222770000"],
+            ["MIRINDA NARANJA 3 LTS PET", "6", 4, "https://walmarthn.vtexassets.com/arquivos/ids/677668/9105_02.jpg?v=638875165004400000"],
+            ["MIRINDA NARANJA 2 LTS PET", "8", 4, "https://walmarthn.vtexassets.com/arquivos/ids/677692/9097_01.jpg?v=638875165089270000"],
+            ["MIRINDA NARANJA 1.5 LTS PET", "12", 4, "https://mediato.com.uy/mvdpanel_productos_img/Refresco_Mirinda_naranja_6_bot_x_1_5lt_2.jpg"],
+            ["MIRINDA NARANJA 600 ML PET", "12", 4, "https://walmarthn.vtexassets.com/arquivos/ids/512910/7874_01.jpg?v=638660202052970000"],
+            ["MIRINDA NARANJA 8 ONZ LATA", "24", 4, "https://walmartgt.vtexassets.com/arquivos/ids/872324/27368_01.jpg?v=638923431421930000"],
+            ["MOUNTAIN DEW 355 ML LATA", "24", 4, "https://walmarthn.vtexassets.com/arquivos/ids/176566/Gaseosa-Mountain-Dew-Lata-355Ml-1-7864.jpg?v=637673386148030000"],
+            ["MOUNTAIN DEW 473 ML LATA 1*24", "24", 4, "https://lacolonia.vtexassets.com/arquivos/ids/252699/7401005906213.jpg?v=638906293255270000"],
+            ["MOUNTAIN DEW 600 ML PET", "12", 4, "https://lacolonia.vtexassets.com/arquivos/ids/252686-800-800?v=638901979053970000&width=800&height=800&aspect=true"],
+            ["COCA COLA 3 PET6", "6", 4, "https://walmarthn.vtexassets.com/arquivos/ids/342919/Gaseosa-Coca-Cola-regular-3-L-1-9221.jpg?v=638392774205170000"],
+            ["COCA COLA 2 PET6", "6", 4, "https://walmarthn.vtexassets.com/arquivos/ids/342925/Gaseosa-Coca-Cola-regular-2-L-1-4739.jpg?v=638392774231800000"],
+            ["COCA COLA 1.5 PET6", "6", 4, "https://walmarthn.vtexassets.com/arquivos/ids/722651/bebida-gaseosa-coca-cola-original-1-5-l-0784562010553.webp?v=638971962050330000"],
+            ["COCA COLA 500ML 12", "12", 4, "https://walmarthn.vtexassets.com/arquivos/ids/342911/Gaseosa-Coca-Cola-regular-500-ml-1-4740.jpg?v=638392774172600000"],
+            
+            //---BEBIDAS ALCOHOLICAS---//
+            ["YUSCARAN ORIGINAL 1 LT PET.", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369911/Yuscaran-El-Original-1000Ml-1-9247.jpg?v=638423451678600000"],
+            ["YUSCARAN ORIGINAL 1/2 LT PET.", "24", 5, "https://drive.google.com/thumbnail?id=1FzsJxnAX_1fN7_EsmlBummTvMtzFK73u"],
+            ["YUSCARAN ORIGINAL 1/4 PET", "48", 5, "https://drive.google.com/thumbnail?id=17h2HwXVUoPjStjkoHyi8gTXFHozi19a1"],
+            ["YUSCARAN ORIGINA 1/8 PET.", "48", 5, "https://drive.google.com/thumbnail?id=1t_8JXiHjTPXazQBbHHLb7bt24em2CFTo"],
+            ["YUSCARAN AMARETO 1L PET", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/238129/7422110500103-1.jpg?v=638859659006770000"],
+            ["YUSCARAN AMARETO 1/2 PET.", "24", 5, "https://drive.google.com/thumbnail?id=1qMdp3iZvtU77gYi_JH9Bnh4lOirT5Ddu"],
+            ["YUSCARAN AMARETO 1/4 PET.", "48", 5, "https://drive.google.com/thumbnail?id=1_EihOVEWKMOu6bpaetVfpctska7Ie_g1"],
+            ["YUSCARAN AMARETO 1/8 PET.", "48", 5, "https://drive.google.com/thumbnail?id=1x3omiQ-NX1ngm0Nhat6svzfLfJ34LCAQ"],
+            ["YUSCARAN ORO 1LT PET.", "12", 5, "https://drive.google.com/thumbnail?id=1xmWtCC2N1GlCtMImTEENTl2UGHASO6VV"],
+            ["YUSCARAN ORO 1/2 PET.", "24", 5, "https://super-del-corral.myshopify.com/cdn/shop/products/7422110500196_600x.jpg?v=1591293556"],
+            ["YUSCARAN ORO 1/4 PET.", "48", 5, "https://drive.google.com/thumbnail?id=1ZLqoxgpQloLrAb-b-helBG5LIN2eu2oE"],
+            ["YUSCARAN ORO 1/8 PET.", "48", 5, "https://drive.google.com/thumbnail?id=1rMiOBFOPppDJLcTfWl36UvfAidX45Tgg"],
+            ["YUSCARAN MANDARINA LT", "12", 5, "https://super-del-corral.myshopify.com/cdn/shop/products/7422110500394_2224x.jpg?v=1591293587"],
+            ["YUSCARAN MANDARINA MEDIO LT", "24", 5, "https://drive.google.com/thumbnail?id=1gGcoXEREnItnvWm9vM8jiH1oM59PHWTK"],
+            ["YUSCARAN MANDARINA 2/8 PET", "48", 5, "https://drive.google.com/thumbnail?id=1tjmAqo-QAy8XFT35OEeU5BAjzxCUcxim"],
+            ["YUSCARAN MANDARINA 1/8 PET", "48", 5, "https://drive.google.com/thumbnail?id=13b9YXshesuTnPjd5sPXj2-fyWjtg40t-"],
+            ["BAMBU 1000M", "12", 5, "https://drive.google.com/thumbnail?id=1CN6s1rcTTnc2FBsIOnZzmpxwKRqxkZpu"],
+            ["BAMBU 500 ML PET", "24", 5, "https://drive.google.com/thumbnail?id=1B3uho3aHDZKlVlPwJovy7eo16g-HN_FK"],
+            ["GOLAZO 1000 ML", "12", 5, "https://drive.google.com/thumbnail?id=17slw1kcYkdzbGvmm04-_Tb3aaY2Q5Bl5"],
+            ["GOLAZO 500ML", "24", 5, "https://drive.google.com/thumbnail?id=1LtZPLcz4sq1HQJTD10kWtoJOfDlDitJs"],
+            ["GOLAZO 250ML", "48", 5, "https://drive.google.com/thumbnail?id=1T3ZSK-boFaRPQBvXYtjuZwxQfRMPJjLw"],
+            ["TIKAL 1000ML", "12", 5, "https://drive.google.com/thumbnail?id=1Q1QzE9hlxZeP_G7IkaB0cJkVRqa3CuNm"],
+            ["TIKAL 500ML", "24", 5, "https://drive.google.com/thumbnail?id=13tWvkDfR496qReRPP6_dDNl9Us5bkYgN"],
+            ["CATRACHO 1000ML", "12", 5, "https://drive.google.com/thumbnail?id=12a6NksS6rpbePiUfEghH03EMLsbtL94N"],
+            ["CATRACHO 500ML", "24", 5, "https://drive.google.com/thumbnail?id=1O1nEevi1as_1h85pmQwkVhI8HNzSlhde"],
+            ["CATRACHO 250 ML", "48", 5, "https://drive.google.com/thumbnail?id=16E8uZrxe7T6OJE0Z3KhpdoXQWdkOSEPF"],
+            ["CATRACHO PET 125 ML", "48", 5, "https://drive.google.com/thumbnail?id=1McwyBmApfrMD6tjmYB6Osq-Dl0vu-dA9"],
+            ["TATASCAN CRISTAL 25° 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1Od1mviV6dOTN6wRcCwXsrLOTjsPMv7Ja"],
+            ["TATASCAN SUAVE 25° 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1vorcSk9CEULVdRtwM83VZZSKegLnBQVy"],
+            ["TATASCAN ORIGINAL 500ML", "24", 5, "https://super-del-corral.myshopify.com/cdn/shop/products/7422111000534_1690x.jpg?v=1591293618"],
+            ["TATASCAN ORIGINAL 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369864/Ron-Tatascan-Compuesto-1000-ml-1-9251.jpg?v=638423451377870000"],
+            ["TATASCAN ORIGINAL 250ML", "48", 5, "https://drive.google.com/thumbnail?id=1vVUjXpiYnryY9zZFgnn0mlY9STpgKqZ6"],
+            ["TATASCAN ORIGINAL 125ML", "48", 5, "https://drive.google.com/thumbnail?id=1MFmgLvKi9nO_Ja8FgZryIvuI_cAJGpWW"],
+            ["TATASCAN AMARETTO 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369913/Aguardiente-Tatascan-Amareto-1000-ml-1-9253.jpg?v=638423451686630000"],
+            ["TATASCAN AMARETTO 500ML", "24", 5, "https://drive.google.com/thumbnail?id=1RsCrFVGXv3pFsioTvQ1s3zNPZCISckf_"],
+            ["TATASCAN AMARETTO 250ML", "48", 5, "https://drive.google.com/thumbnail?id=1fsMI-xT9TrINDD6WCzJu_JNguQgc8xkO"],
+            ["PLATA LITE 125 ML PET.", "48", 5, "https://drive.google.com/thumbnail?id=1aoLTom3VKuDIUSp6dIPL6TKZaOUElMwl"],
+            ["PLATA LITE VIDRIO 1000ML", "12", 5, "https://drive.google.com/thumbnail?id=1Pxdgyb19wlZuV_hzKInZ1WnvHpdzPTvU"],
+            ["PLATA LITE 250 ML PET.", "48", 5, "https://drive.google.com/thumbnail?id=1AWDTNMus6pH-mC4DFkXeT9xaAPFuaOq0"],
+            ["PLATA PREMIUN PET 250 ML", "48", 5, "https://drive.google.com/thumbnail?id=1_s5smfjFHG-svuUOQoQO3Ifs3Ien6g8h"],
+            ["PLATA PREMIUM FUEGO 750ML 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1-CrPxDEq3wP6c0VsUV2cSsE42NTR66Qt"],
+            ["PLATA PREMIUM ROBLE 750ML 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1WfhURlubgJq0x3eqDm3z1EkLiL16sJ0Q"],
+            ["PLATA PREMIUM VELVET 750ML 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1xrHpF0YPquDj5Z0OLTO226nCQ_Ak-68_"],
+            ["RON BOTRAN XL 375ML", "24", 5, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/4788/image_1024?unique=f8f2121"],
+            ["RON BOTRAN XL 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/676065/7825_01.jpg?v=638869107113400000"],
+            ["RON BOTRAN XL 1000ML", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/162617/Licores-y-Cigarros-Licores-Ron_7401005001871_1.jpg?v=636843695641670000"],
+            ["RON XL MANDARINA LITRO", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/678001/60186_01.jpg?v=638875167728230000"],
+            ["RON BOTRAN XL LIMON BERRIES375 ML", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/510412-800-450?v=638469562302530000&width=800&height=450&aspect=true"],
+            ["RON BOTRAN XL LIMON & BERRIES 750 ML", "12", 5, "https://lacasadelron.gt/cdn/shop/files/13004622_4c26434d-7704-4b43-befd-96f23c75813a.png?v=1752866499"],
+            ["RON MANDARINA XL 750 ML.", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/356260/Ron-Con-Sabores-Xl-Sabor-Mandarina-750ml-1-7835.jpg?v=638417189707500000"],
+            ["RON BOTRAN XL PIÑA COCO 375 ML", "24", 5, "https://lacasadelron.gt/cdn/shop/files/13004053_8a97d6b5-4369-4c27-adfe-8b4157b2566c.png?v=1756750846"],
+            ["RON XL MANDARINA 375 NUEVA IMAGEN", "24", 5, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/4799/image_1024?unique=927b9ba"],
+            ["RON BOTRAN XL MANZANA LIMON 375 ML", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/510618/Ron-Botran-Xl-Manzana-Y-Lim-n-375ml-1-27163.jpg?v=638469993741000000"],
+            ["RON XL PIÑA COCO 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/300452/Ron-Marca-Botran-Xl-Pi-a-Y-Coco-750ml-1-7834.jpg?v=638237470270200000"],
+            ["RON XL LIMON PEPINO 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/356183/Ron-Botran-Xl-Lim-n-Y-Pepino-750ml-1-7837.jpg?v=638417189266930000"],
+            ["RON XL LIMON PEPINO 375 ML", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/510440-800-450?v=638469562414500000&width=800&height=450&aspect=true"],
+            ["XL MANZANA LIMON 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/300453/Ron-Marca-Botran-Xl-Manzana-Y-Lim-n-750ml-1-7836.jpg?v=638237470273770000"],
+            ["RON XL FRESA&KIWI 750 ML", "12", 5, "https://walmartgt.vtexassets.com/arquivos/ids/725580-800-450?v=638711862560330000&width=800&height=450&aspect=true"],
+            ["RON XL MANGO&PIÑA 750ML", "12", 5, "https://walmartgt.vtexassets.com/arquivos/ids/672487-800-450?v=638667043548830000&width=800&height=450&aspect=true"],
+            ["RON BOTRAN XL MANGO&PIÑA 375 ML", "24", 5, "https://latorremx.vtexassets.com/arquivos/ids/189818/2061931-frontal.jpg?v=638470759485900000"],
+            ["FLOR DE CAÑA ORO 4 AÑOS LT.", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/763606-800-450?v=639092938541170000&width=800&height=450&aspect=true"],
+            ["FLOR DE CAÑA ORO 4 AÑOS 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/763603/ron-flor-de-cana-anejo-oro-4-anos-1000-ml-0026964237689.jpg?v=639092938530000000"],
+            ["FLOR DE CAÑA ORO 4 AÑOS 375ML", "24", 5, "https://info.megasuper.com/ecommerce/026964458763_1.jpeg"],
+            ["FLOR DE CAÑA 1/2 GALON 1750 ML", "6", 5, "https://walmartsv.vtexassets.com/arquivos/ids/405697/Ron-Flor-De-Cana-Oro-4-Anos-1750Ml-1-13522.jpg?v=638423893898000000"],
+            ["FLOR DE CAÑA 7 AÑOS 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/433502/35696_01.jpg?v=639092017008430000"],
+            ["FLOR DE CAÑA 7 AÑOS 1000+375ML", "6", 5, "https://walmartsv.vtexassets.com/arquivos/ids/728951/106619_01.jpg?v=638814597130800000"],
+            ["FLOR DE CAÑA 7 AÑOS 1L", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/f/2/a/6/f2a6058f9bfcd97816473c68aebf1ee391358df8_Rum_238710_01.jpg"],
+            ["FLOR DE CAÑA 7 AÑOS 375 ML", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/742409/ron-flor-de-cana-7-anos-gran-reserva-375-ml-0026964824735.jpg?v=639082416916430000"],
+            ["FLOR DE CAÑA 7 AÑOS 1/2 GALON", "6", 5, "https://walmartni.vtexassets.com/arquivos/ids/540203/600_01.jpg?v=638690312647130000"],
+            ["FLOR DE CAÑA EXTRA SECO LITRO", "12", 5, "https://www.tintohn.com/wp-content/uploads/2020/04/ron-flor-de-cana-extra-seco-litro-especial.jpg"],
+            ["FLOR DE CAÑA ULTRA LITE 4 AÑOS 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/641457/1331_01.jpg?v=638797185188200000"],
+            ["FLOR DE CAÑA ULTRA LITE 1000 ML", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/232995/026964860191-1.jpg?v=638851891153730000"],
+            ["FLOR DE CAÑA 12 AÑOS 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/760755/ron-flor-de-cana-centenario-anejo-12-anos-750-ml-0026964823967.jpg?v=639082437569270000"],
+            ["RON ZACAPA 23 AÑOS 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/300450/Ron-Marca-Zacapa-Sistema-23-Solera-Gran-Reserva-750ml-1-7824.jpg?v=638237470264000000"],
+            ["RON ZACAPA 12 AÑOS AMBAR", "12", 5, "https://walmartcr.vtexassets.com/arquivos/ids/783182-800-450?v=638678440348500000&width=800&height=450&aspect=true"],
+            ["RPP PLATA PREMIUM 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369865/Ron-Plata-Premiun-1000Ml-1-9258.jpg?v=638423451385300000"],
+            ["RPP PLATA PREMIUM 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/677702/9259_01.jpg?v=638875165121830000"],
+            ["PLATA REPOSADO 750 ML", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/233848/7422111009957-1.jpg?v=638857946064100000"],
+            ["RPP PLATA PREMIUN 375ML", "24", 5, "https://drive.google.com/thumbnail?id=1R4gILNJWVvejtmLYlgM3ak9kLBZm7m41"],
+            ["PLATA PREMIUN  1/2 GALON 1750 ML", "6", 5, "https://drive.google.com/thumbnail?id=1nudtN-J5SOdW7eN7o5-lEF3FmNURoz7j"],
+            ["PLATA AZUL 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/673265/1334_01.jpg?v=638864823352530000"],
+            ["PLATA AZUL 375ML", "24", 5, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/4637/image_1024?unique=af64cfe"],
+            ["PLATA LITE 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/350197/Ron-Plata-Lite-750-ml-1-1328.jpg?v=638415349063200000"],
+            ["PLATA LITE 375ML", "24", 5, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/4634/image_1024?unique=330c3f7"],
+            ["PLATA LITE GUAVAPIÑA VIDRIO 375ML", "24", 5, "https://drive.google.com/thumbnail?id=1xXI8HV-WVNQndSVNSX-y188l0r8GFsYa"],
+            ["PLATA LITE MANZANA VIDRIO 375ML", "24", 5, "https://drive.google.com/thumbnail?id=15LxXyJUM4F5K-s3IMIJMZjHpqplNnanI"],
+            ["PLATA LITE GUAVAPIÑA VIDRIO 750ML", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/250989-800-800?v=638797444497070000&width=800&height=800&aspect=true"],
+            ["PLATA LITE MANZANA VIDRIO 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/666667/71599_01.jpg?v=638851425112630000"],
+            ["PLATA LITE GUAVAPIÑA VIDRIO 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/655029/71598_01.jpg?v=638827641459030000"],
+            ["PLATA LITE MANZANA VIDRIO 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/666667/71599_01.jpg?v=638851425112630000"],
+            ["PLATA LITE GUAVAPIÑA 250ML", "48", 5, "https://drive.google.com/thumbnail?id=1XeI5J-MWijC06RqreHIs_QiyWwX011ZY"],
+            ["PLATA LITE CITRUS 250ML", "48", 5, "https://drive.google.com/thumbnail?id=18kMw0NTGvaWx-0m3qW5rqU73K-bvhWVx"],
+            ["PLATA LITE MANZANA 250ML", "48", 5, "https://drive.google.com/thumbnail?id=1PTqsVsQuau1CkX3PmveyuLJLf7W9z_rE"],
+            ["BACARDI LIMON 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/654841/66672_01.jpg?v=638827635529230000"],
+            ["BACARDI LIMON MEDIA 24*375ML", "24", 5, "https://exitocol.vteximg.com.br/arquivos/ids/32369342/Ron-Bacardi-Limon-X-375ml-566789_a.jpg?v=639053939473570000"],
+            ["BACARDI AÑEJO 750ML", "12", 5, "https://walmartni.vtexassets.com/arquivos/ids/359010/Ron-Bacardi-A-ejo-750ml-1-25739.jpg?v=638423784015100000"],
+            ["BACARDI GOLD 750ML", "12", 5, "https://d323g1xugy1rkz.cloudfront.net/wp-content/uploads/sites/25/2020/08/21154659/Products-Bottle-Gold-min.png"],
+            ["BACARDI SUPERIOR 750ML", "12", 5, "https://d323g1xugy1rkz.cloudfront.net/wp-content/uploads/sites/25/2020/08/21154801/Products-Bottle-Superior-min.png"],
+            ["WHISKY BUCHANAN'S 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/758516/whisky-buchanans-deluxe-12-anos-premiun-botella-750-ml-0000050196388.jpg?v=639076269224400000"],
+            ["WHISKY BUCHANANS 18 AÑOS 750 ML", "12", 5, "https://images.albertsons-media.com/is/image/ABS/960069465-C1N1?$ng-ecom-pdp-desktop$&defaultImage=Not_Available"],
+            ["WHISKY BUCHANANS 1000ML", "12", 5, "https://exitocol.vtexassets.com/arquivos/ids/32365946/Whisky-Buchanans-Deluxe-1000-ml-989947_a.jpg?v=639053842200670000"],
+            ["WHISKY CHIVA REGAL 12 AÑOS 500 ML", "12", 5, "https://www.frappe.com.ar/3333-thickbox_default/chivas-regal-500-ml.jpg"],
+            ["WHISKY JACK DANIELS APPLE 750 ML", "12", 5, "https://licorerias.com.pe/wp-content/uploads/2023/11/whisky-jack-daniels-apple-botella-700ml-5354629473.png"],
+            ["WHISKY JACK DANIELS 750 ML.", "12", 5, "https://lacolonia.vtexassets.com/arquivos/ids/186480-800-800?v=637117578205530000&width=800&height=800&aspect=true"],
+            ["WHISKY JACK DANIELS HONEY 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/553192/2771-02.jpg?v=639092017911930000"],
+            ["WHISKY JOHNNIE WALKER RED LABEL 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/447896/36377_01.jpg?v=638593948309930000"],
+            ["WHISKY JOHNNIE WALKER RED LABEL 375 ML", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/710950/whisky-johnnie-walker-red-label-375-ml-5000267014609.webp?v=639003162043400000"],
+            ["WHISKY JOHNNIE WALKER BLUE LABEL 750 ML", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/9/8/e/4/98e4501eeb5d87b85d81d657d71e5447b5b55475_Liquors_51920_02.jpg"],
+            ["WHISKY JOHNNIE WALKER BLACK 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/730500/johnnie-walker-black-label-750-ml-5000267190167.webp?v=639003168099330000"],
+            ["WHISKY JOHNNIE WALKER BLACK 375 ML", "24", 5, "https://walmartcr.vtexassets.com/arquivos/ids/717029/356_01.jpg?v=638624736740300000"],
+            ["WHISKY JOHNNIE WALKER BLACK 1000 ML", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/5/c/f/b/5cfba5824c984556c278a3071681dbc8cf87962b_Liquor_70683_01.jpg"],
+            ["WHISKY GOLD PARD 750ML", "12", 5, "https://cdn.almacen.do/2018/05/Old-Parr-12-An%CC%83os-750ml.jpg"],
+            ["WHISKY OLD PARR SILVER 750 ML", "12", 5, "https://cdn.almacen.do/2023/05/151689-0.jpg"],
+            ["WHISKY JOHNNIE WALKER DOUBLE BLACK 750ML", "12", 5, "https://walmartcr.vtexassets.com/arquivos/ids/898014/9527_01.jpg?v=638790540090970000"],
+            ["AGUARDIENTE ANTIOQUEÑO AZUL SIN AZUCAR 750 ML 1*12", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/d/d/4/0/dd4022172a2a5953076c336cb19ae11c4424bb8d_Liqueurs_463884_01.jpg"],
+            ["AGUARDIENTE ANTIOQUEÑO VERDE SIN AZUCAR 750 ML 1*12", "12", 5, "https://laguardaec.vtexassets.com/arquivos/ids/157405/antioque-o-verde-750ml.jpg?v=638833109317070000"],
+            ["JAKABOON HERBAL 700 ML 1*12", "12", 5, "https://drive.google.com/thumbnail?id=1ApFa-AR07nbEqDspTLbXCA7H4a9OYC3Y"],
+            ["EL PADRINO REPOSADO 750 ML", "12", 5, "https://hn.soledist.com/web/image/product.template/28711/image_1024?unique=76aafbe"],
+            ["TEQUILA CORRALEJO 750 ML", "12", 5, "https://walmartcr.vtexassets.com/arquivos/ids/881061/93705_01.jpg?v=638762864590000000"],
+            ["TEQUILA DON JULIO AÑEJO 750ML", "6", 5, "https://walmartgt.vtexassets.com/arquivos/ids/695045-800-450?v=638687773460130000&width=800&height=450&aspect=true"],
+            ["TEQUILA DON JULIO REPOSADO 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/640334/3662_01.jpg?v=638790444242700000"],
+            ["TEQUILA DON JULIO 70 AÑOS 750 ML", "12", 5, "https://elcatador.com/cdn/shop/files/a8b1f1e7c6ae0497cd8122febf59d0f0_600x.jpg?v=1778907985"],
+            ["TEQUILA JOSE CUERVO ESPECIAL 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/644244/11658_01.jpg?v=638799315366400000"],
+            ["TEQUILA JOSE CUERVO ESPECIAL 1000ML", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/b/7/7/9/b779ac1d5e84a76e3682bb3d16d2636505ef0c4a_Tequila_53355_01.jpg"],
+            ["TEQUILA JOSE CUERVO ESPECIAL 375 ML.", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/449360/Tequila-Jose-Cuervo-Oro-375ml-1-36113.jpg?v=638415244066770000"],
+            ["TEQUILA PATRON AÑEJO 750 ML.", "1", 5, "https://super-del-corral.myshopify.com/cdn/shop/products/descarga_38_225x.jpg?v=1590613738"],
+            ["TEQUILA 1800 REPOSADO 750 ML.", "12", 5, "https://hn.soledist.com/web/image/product.template/28204/image_1024?unique=c42e158"],
+            ["TEQUILA 1800 CRISTALINO 700 ML", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/1/1/0/f/110f239f25cdbfed9e0888a193f2f94b9aaf59d9_Tequilas_401273_01.jpg"],
+            ["TEQUILA 1800 AÑEJO 750 ML.", "12", 5, "https://d31f1ehqijlcua.cloudfront.net/n/3/2/c/c/32cc6ea6489966da8349dbb3e6946924e05e790f_Tequila_90461_01.jpg"],
+            ["TEQUILA MAYORAZGO REPOSADO 1*12*750 ML", "12", 5, "https://www.tintohn.com/wp-content/uploads/2020/06/mayorazgo-reposado.jpg"],
+            ["TEQUILA JARANA REPOSADO 35% 1000ML 12*1", "12", 5, "https://tienda.mmh.hn/storage/248/TEQUILA-JARANA-REPOSADO-24x750-ml,-12x1-L.jpg"],
+            ["TEQUILA JARANA REPOSADO 35% ALC 12X1 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/640684/57706_01.jpg?v=638790462410070000"],
+            ["TEQUILA JARANA 1.750 ML", "6", 5, "https://walmartsv.vtexassets.com/arquivos/ids/610970-800-450?v=638678994648770000&width=800&height=450&aspect=true"],
+            ["GIN TANQUERAY 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/730520/tanqueray-london-dry-gin-750-ml-5000291020706.webp?v=639003192157370000"],
+            ["VODKA ABSOLUT 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/539035/35703_01.jpg?v=638678968609500000"],
+            ["VODKA ABSOLUT 375ML", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/849880/26512_01.jpg?v=638883657512800000"],
+            ["VODKA ABSOLUT 1000ML", "12", 5, "https://cdn.awsli.com.br/1231/1231345/produto/257049369/vodka-absolut-1l-vohov5l4lc.jpg"],
+            ["VODKAS ABSOLUT 1.75L", "6", 5, "https://m.media-amazon.com/images/I/51JnG0XaZdL.jpg"],
+            ["VODKA SMIRNOFF 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/420958/4458_01.jpg?v=638554559618800000"],
+            ["VODKA SMIRNOF GREEN APPLE 750", "12", 5, "https://www.lacoopeencasa.coop/media/lcec/publico/articulos/0/7/5/075f8174644775c3a2ad5128ce819ea8"],
+            ["VODKA BLACK 1000ML", "12", 5, "https://walmartsv.vtexassets.com/arquivos/ids/405657/Vodka-Botran-Black-1000Ml-1-5708.jpg?v=638423893640570000"],
+            ["VODKA RED 1000", "12", 5, "https://www.lamonjaras.com/admin/storage/products/VODKA_RED_CANE_1LITRO.jpg"],
+            ["VODKA BLACK CANE 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/356384/Vodka-Botran-Black-750-Ml-1-15166.jpg?v=638417190394300000"],
+            ["VODKA RED 750ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369168-1200-900?v=639092020557900000&width=1200&height=900&aspect=true"],
+            ["VODKA SPIRIT ORANGE 275ML", "24", 5, "https://addide.com/cdn/shop/products/MG_Spirit_Vodka_Orange-removebg-preview.png?v=1666194676"],
+            ["VODKA SPIRIT MOJITO 275ML", "24", 5, "https://images.rappi.com.mx/products/255713763093_arpuxvpmmnfm_253405261204_xzbxtsjcpjjluy_72792_1.png"],
+            ["VODKA SPIRIT PASFRUIT 275ML", "24", 5, "https://walmartsv.vtexassets.com/arquivos/ids/719683/98437_01.jpg?v=638799255109700000"],
+            ["VODKA SPIRIT BLBERRY 275ML", "24", 5, "https://dojiw2m9tvv09.cloudfront.net/54185/product/vodka-spirit-rtd-mg-blueberry-275ml-1-30504-13508.jpg"],
+            ["VODKA SPIRIT PINEAPLLE 275ML", "24", 5, "https://walmartgt.vtexassets.com/arquivos/ids/685298/64860_01.jpg?v=638678944166600000"],
+            ["VODKA TOVARICH 700 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/752344/vodka-tovarich-750-ml-7422111007076.webp?v=639062775022830000"],
+            ["VINO ROSADO DULCE GARNACHA T. Y AIREN 750 ML", "12", 5, "https://drive.google.com/thumbnail?id=1EbM9DNfg4dSYvD5XniMBD4uJd5qyVO3z"],
+            ["VINO ROSADO SEMI-SECO GARNACHA T. Y AIREN 750 ML", "12", 5, "https://drive.google.com/thumbnail?id=15iX2kxFbLBw5TV2ostrPgNj9WlAMvxmr"],
+            ["VINO TINTO DULCE TEMPRANILLO 750 ML", "12", 5, "https://static-files.bluexpace.com/hn/uploads/2025/12/A67228.webp"],
+            ["VINO TINTO JOVEN TEMPRANILLO 750 ML", "12", 5, "https://drive.google.com/thumbnail?id=1Rapc30vn69ZDuLcTBlmRtbFAE_yU4Zf3"],
+            ["VINO MIDNIGHT EXPRESO 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/170728/Vino-Midnight-Expres-700-Ml-1-9263.jpg?v=637665610729670000"],
+            ["VINO BAREFOOT MERLOT", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/357760/Vino-Tinto-Barefoot-Merlot-750-ml-1-936.jpg?v=638417398719930000"],
+            ["VINO BAREFOOT MOSCATO 750 ML", "12", 5, "https://images.albertsons-media.com/is/image/ABS/960010995-C1N1?$ng-ecom-pdp-desktop$&defaultImage=Not_Available"],
+            ["VINO WELCH'S 750 ML", "12", 5, "https://walmartcr.vtexassets.com/arquivos/ids/842896/371_01.jpg?v=638731684378600000"],
+            ["CHAMPAÑA ANDRE ROSE 750 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/349387/Vino-Espumoso-Andre-Rose-750-Ml-1-2785.jpg?v=638415242250430000"],
+            ["CHAMPAÑA ANDRE 750 ML", "12", 5, "https://walmartni.vtexassets.com/arquivos/ids/336111/Vino-Blanco-Espumante-Andre-Brut-750Ml-1-1896.jpg?v=638415458986400000"],
+            ["CERVEZA IMPERIAL 16ON 1*24", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/369863/Cerveza-Imperial-Lata-473ml-1-9232.jpg?v=638423451371670000"],
+            ["CERVEZA TOÑA LATA 16 ONZ", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/504387/2480_01.jpg?v=638660955277800000"],
+            ["CERVEZA BUD LIGHT LATA 355ML 1*24", "24", 5, "https://cavagrapaan.alvisar.com/wp-content/uploads/2024/07/Bud-Ligth-Lata.png"],
+            ["CERVEZA BUD LIGHT BOTELLA 355ML 1*24", "24", 5, "https://bodegamiamiga.com/wp-content/uploads/2024/09/BUD-LIGHT-BEER-BOTELLA-300ML-e1727287517854.webp"],
+            ["CERVEZA TOÑA LIGTH LATA", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/625379/2828_01.jpg?v=638797911325400000"],
+            ["CERVEZA VICTORIA 350 BOT ML", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/662344/2465_01.jpg?v=638864805203900000"],
+            ["CERVEZA VICTORIA 350 LATA ML", "24", 5, "https://walmartni.vtexassets.com/arquivos/ids/336088/Cerveza-Victoria-Lata-350Ml-1-2462.jpg?v=638415458868370000"],
+            ["CERVEZA BARENA LATA.", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/298578/Cerveza-Barena-Lata-355-ml-1-9225.jpg?v=638221703802430000"],
+            ["CERVEZA BARENA 355 ML 1*18", "18", 5, "https://walmarthn.vtexassets.com/arquivos/ids/298612/Cerveza-Marca-Barena-Lata-18-Pack-354ml-1-24863.jpg?v=638221703918100000"],
+            ["CERVEZA BARENA 16ON 1*24", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/356313-1600-1200?v=638417190004600000&width=1600&height=1200&aspect=true"],
+            ["CERVEZA SALVA VIDA LATA", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/171865/Cerveza-Salva-Vida-Lata-355Ml-1-4749.jpg?v=637666370285800000"],
+            ["CERVEZA SALVA VIDA LATA 16 ONZ", "24", 5, "https://lacolonia.vtexassets.com/arquivos/ids/247058/7422110101348_1.jpg?v=638519930624430000"],
+            ["CERVEZA SALVA VIDA 355 ML 1*18", "18", 5, "https://walmarthn.vtexassets.com/arquivos/ids/644910/23763_01.jpg?v=638803203126600000"],
+            ["CERVEZA MODELO ESPECIAL", "24", 5, "https://lacolonia.vtexassets.com/arquivos/ids/168361/75053062_1.jpg?v=638888011470670000"],
+            ["CERVEZA CORONA BOTELLA", "24", 5, "https://www.cerveceriahondurena.com/sites/g/files/seuoyk1316/files/2023-07/Corona%20botella.png"],
+            ["LIVIT PINEAPPLE SUN/PIÑA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/741881/livit-pineapple-sunset-pina-355-ml-7422111061924.jpg?v=639040023283530000"],
+            ["LIVIT CITRUS/NARANJA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/482868/59524_01.jpg?v=638627058326900000"],
+            ["LIVIT GRAPEEXPLO./UVA355ML", "24", 5, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD7ERV_aB2L3yEl_HJAyzYW65g31-e_sHXHQ&s"],
+            ["LIVIT FIZZTRAWB/FRESA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/741869/livit-fizztrawberry-fresa-355-ml-7422111061917.jpg?v=639040023240430000"],
+            ["LIVIT JOLLY APPLE/MANZANA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/732431/livit-jolly-green-apple-burst-man-355-ml-7422111061900.jpg?v=639009988837130000"],
+            ["LIVIT MANZANA VERDE LATA 473ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/746861/livit-jolly-green-apple-burst-473-ml-7422111063669.jpg?v=639047193480170000"],
+            ["LIVIT PIÑA LATA 473ML", "24", 5, "https://inturfiles.s3.us-east-2.amazonaws.com/folder/products/500X500/SCK150363_bec0bd8.jpg"],
+            ["LIVIT FRESA LATA 473ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/743018-1600-1200?v=639041085926700000&width=1600&height=1200&aspect=true"],
+            ["4EVER MARGARITA LATA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/752222/4-ever-margarita-lata-355-ml-7422111061658.jpg?v=639062562582600000"],
+            ["4EVER MOJITO LATA 355ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/752171/4-ever-mojito-lata-355-ml-7422111061634.jpg?v=639062562424970000"],
+            ["CERVEZA MICHELOB ULTRA BOTELLA", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/523191/9244_02.jpg?v=638664612993130000"],
+            ["CERVEZA MICHELOB 12 ONZ LATA", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/724446-800-450?v=638984028113200000&width=800&height=450&aspect=true"],
+            ["CERVEZA GALLO LIGHT BOTELLA", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/685665/7722_01.jpg?v=638883837868570000"],
+            ["MEZCLA FINEST CALL FROSE 1000ML", "12", 5, "https://www.finestcall.com/wp-content2/uploads/sites/23/2024/12/rose.png"],
+            ["MEZCLA FINEST CALL MICHELADA 1000ML", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/FC-Michelada-Mixer-L-copy.png"],
+            ["MEZCLAS P/COCTELES FINEST CALL BLUE", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/blue-curacao-web.png"],
+            ["MEZCLAS /COCTELES FINEST CALL MOJITO", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/FC-Mojito-Mixer-L-copy.png"],
+            ["MEZCLASP/COCTELES FINEST CALLMARGARITA 1000", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/FC-Margarita-Mixer-L-copy.png"],
+            ["MEZCLASP/COCTELES FINEST CALL PIÑA COLADA", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/pina-colada-web.png"],
+            ["MEZCLASP/COCTELES FINEST CALL MANGO", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2017/11/FC-mango-Puree-Mix-L-copy.png"],
+            ["MEZCLASP/COCTELES FINEST CALL SWEET- SOUR MIXER", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2022/02/FC-EU-Sweet-and-Sour-Mixer-1.png"],
+            ["MEZCLASP/COCTELES FINEST CALL STRAMBERRY", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2022/02/FC-EU-Strawberry-Puree-1.png"],
+            ["ME FINEST CALL CRENADIN 1000ML", "12", 5, "https://es.finestcall.com/wp-content2/uploads/sites/25/2022/02/FC-EU-Grenadine-Syrup-1.png"],
+            ["ME FINEST CALL TRIPLE S 1000ML", "12", 5, "https://www.finestcall.com/wp-content2/uploads/sites/23/2017/11/FC-Triple-Sec-Syrup-L-copy.png"],
+            ["MASTER OF DAIQ/MARGARITA 1000ML", "12", 5, "https://m.media-amazon.com/images/I/81kOSqiRFVL.jpg"],
+            ["MASTER OF MARGARITA 1000ML", "12", 5, "https://m.media-amazon.com/images/I/61a4v180BCL._SL1500_.jpg"],
+            ["MASTER OF MOJITO 1000ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/764082-800-450?v=639094663203130000&width=800&height=450&aspect=true"],
+            ["MASTER OF BLOODY MA 1000ML", "12", 5, "https://m.media-amazon.com/images/I/711-w93zanS._AC_UF894,1000_QL80_.jpg"],
+            ["MASTER OF PIÑA COLADA 1000ML", "12", 5, "https://m.media-amazon.com/images/I/6141IGE4-ES._AC_UF894,1000_QL80_.jpg"],
+            ["VINO SANTA ISABEL APPLE 750ML", "6", 5, "https://d2j6dbq0eux0bg.cloudfront.net/images/92992546/products/802890654/5739390921.jpg"],
+            ["VINO SANTA ISABEL WHITE 750ML", "6", 5, "https://drive.google.com/thumbnail?id=1Pwy7A978598OqR_EIeMo81sIg0s-fIIc"],
+            ["VINO SANTA ISABEL RED 750ML", "6", 5, "https://drive.google.com/thumbnail?id=1H14MhYcWoA1HO3jpsgqj_9gm1RPNCqEV"],
+            ["VINO RIUNITE PEACH 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1jpRd2nwPHfo9FCba47xWyrQ5yNn4xcJR"],
+            ["VINO RIUNITE MOSCATO DE ORO 1500 ML", "6", 5, "https://drive.google.com/thumbnail?id=1iCbbRxyRqTMVO1Npi4s7EtVkl2457_8I"],
+            ["IBERIA VINO ESPUMANTE MELOCOTON 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1318xWnP7c2czM5c6aJgp5X0aRC_jmxrB"],
+            ["IBERIA VINO ESPUMANTE UVA ROJA 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1gdQW_FqQFgOhpWGzlccUuN1OnBZxTQqi"],
+            ["IBERIA VINO ESPUMATE FRESA 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1YUWCqcRmP1HRAOt4Ocy-OF1GjDAcPgWL"],
+            ["IBERIA VINO ESPUMATE MANZANA 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1ZBmRKTNqIHqdgr9QMERfAQogp8N8g1An"],
+            ["IBERIA VINO ESPUMATE UVA BLANCA 750ML", "12", 5, "https://drive.google.com/thumbnail?id=1pzmsk8gP3_6pBFZ1EQYLV0zW1ZoLtwbv"],
+            ["CERVEZA SMIRNOFF ICE ORIGINAL 330 ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/349385/RTD-Vodka-Smirnoff-Red-Ice-Botella-355ml-1-2768.jpg?v=638415242240570000"],
+            ["CERVEZA SMIRNOFF ICE MANZANA 330 ML", "24", 5, "https://walmarthn.vtexassets.com/arquivos/ids/348852/RTD-Vodka-Smirnoff-Ice-Green-Apple-355ml-2-2769.jpg?v=638415239802900000"],
+            ["CERVEZA SMIRNOFF ICE RASBERRY 330 ML", "24", 5, "https://www.tintohn.com/wp-content/uploads/2020/09/smirnoff-raspberry.jpg"],
+            ["FRUTA BOMBA MOJITO HIERVA BUENA Y MENTA 500 ML", "12", 5, "https://drive.google.com/thumbnail?id=13Qk7qEY7aqXTq-IwPDRcix1uJzbgqZC0"],
+            ["FRUTA BOMBA TAMARINDO MARTINI 500 ML", "12", 5, "https://drive.google.com/thumbnail?id=1q65gFiigmvb3PNt0WT1mSHpj63Vq3BZ0"],
+            ["FRUTA BOMBA BLUE MARTINI 500 ML", "12", 5, "https://drive.google.com/thumbnail?id=1fMGYFfiijxp6m1WFvY_L3scSYVEUOuSt"],
+            ["FRUTA BOMBA TE FRIO LONG ISLAND 500 ML", "12", 5, "https://drive.google.com/thumbnail?id=1P_6tyopTYGvZpglqwfx1S3lk9Y58DHfm"],
+            ["CERVEZA TECATE 355ML LIGHT LATA", "24", 5, "https://lacolonia.vtexassets.com/arquivos/ids/246719/75004132_1.jpg?v=638484661420200000"],
+            ["RTS BACARDI MOJITO 1*12*720 ML", "12", 5, "https://www.1001spirits.com/tuotekuvat/1200x1200/bacardi%20m.png"],
+            ["RTS BACARDI BAHAMA MAMA 1*12*720 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/267870/Coctel-Bacardi-Bahama-750ml-1-26597.jpg?v=638037347341830000"],
+            ["RTS BACARDI HURRICANE 1*12*720 ML", "12", 5, "https://walmarthn.vtexassets.com/arquivos/ids/368449/Coctel-Bacardi-Hurricane-750ml-2-26599.jpg?v=638423339920600000"],
+            ["RTS BACARDI ZOMBIE 1*12*720 ML", "12", 5, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/38545/image_1024?unique=28480cf"],
+            ["RON BARCELO AÑEJO 1.75L", "6", 5, "https://licorerias.com.pe/wp-content/uploads/2023/11/ron-barcelo-anejo-botella-175l-4c7f802eec.png"],
+            
+            //--- JABONES ---//
+            ["DETERGENTE CLEAN PLUS FLORES(AZUL) 48 LB", "1", 7, "https://drive.google.com/thumbnail?id="],
+            ["DETERGENTE CLEAN PLUS LIMON (VERDE) 48 LB", "1", 7, "https://drive.google.com/thumbnail?id="],
+            ["DET ULTRA KLIN FE 115 (ROSADO)", "35", 7, "https://drive.google.com/thumbnail?id=1z5Z6iyGiXrS4Kjta8SDjK9SWPsiqa4XI"],
+            ["DET ULTRA KLIN FI 115 (MORADO)", "35", 7, "https://grupodonjuliohn.com/wp-content/uploads/2025/10/ultraklin-115g-19.png"],
+            ["SUAVISANTE TERSO NATURALES 12*6 (ANARANJADO)", "6", 7, "https://suavizanteterso.com/wp-content/uploads/2024/08/aceites-naturales-2.webp"],
+            ["SUAVISANTE TERSO DULCE ENCANTO 12*6(BOLSITA VERDE)", "6", 7, "https://suavizanteterso.com/wp-content/uploads/2024/07/dulce-encanto-331.webp"],
+            ["SUAVIZANTE TERSO DELICADA TERN 12*6 (BOLSITA ROSADO)", "6", 7, "https://suavizanteterso.com/wp-content/uploads/2024/07/delicada-ternura-790.webp"],
+            ["SUAVIZANTE/ROPA TERSO FINOS DETALLE 12*6 (BOLSITA MORADO)", "6", 7, "https://suavizanteterso.com/wp-content/uploads/2024/07/finos-detalles-288.webp"],
+            ["DETERGENTE ULTRAKLIN FE 400GRS (ROSADO)", "20", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2025/03/Montaje-UK-FE-400g.png?strip=all&w=2560"],
+            ["DETERGENTE ULTRAKLIN FS 400GRS(ANARANJADO)", "20", 7, "https://eq5nfzr3sin.exactdn.com/wp-content/uploads/2022/02/M-Ultra-Klin%C2%AE-Fuerza-Solar-400g-293x300.png?strip=all"],
+            ["DETERGENTE ULTRAKLIN FT 400GRS(AZUL)", "20", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2025/03/Montaje-UK-FT-400g.png?strip=all&w=2560"],
+            ["DETERGENTE ULTRAKLIN FI 400 GRS(MORADO)", "20", 7, "https://walmarthn.vtexassets.com/arquivos/ids/656215-800-450?v=638829063059470000&width=800&height=450&aspect=true"],
+            ["DETERGENTE ULTRAKLIN FUERZA NATURAL (VERDE)", "20", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2023/09/Montaje-UK-FN-400g-min.png?strip=all&w=2560"],
+            ["DETERGENTE ULTRAKLIN ANTIBACTERIAL (AZUL CELESTE)400 G", "20", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2025/03/Montaje-UK-Antibacterial-400g.png?strip=all&w=2560"],
+            ["DETERGENTE FUERZA NATURAL 9 KG VERDE", "1", 7, "https://walmartgt.vtexassets.com/arquivos/ids/532689-800-450?v=638543454641730000&width=800&height=450&aspect=true"],
+            ["DETERGENTE FUERZA INTENSA 9 KG MORADO", "1", 7, "https://walmarthn.vtexassets.com/arquivos/ids/690911/36947_01.jpg?v=638895879550470000"],
+            ["DETERGENTE FUERZA TOTAL 9KG AZUL", "1", 7, "https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/d45a2c00-9328-447b-b7c2-5a1db7c0a621/content"],
+            ["DETERGENTE FUERZA EXTREMA ROSADO 9 KG", "1", 7, "https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/62bcf64d-0c5f-4d1d-8867-583f78e6c4cc/content"],
+            ["CLORO ACTICLOR LITRO", "12", 7, "https://walmartni.vtexassets.com/arquivos/ids/671385/6100_01.jpg?v=638883744797830000"],
+            ["CLORO GALON SUPER WHITE 1*4", "4", 7, "https://tiendaenlinea.supermercadoelexito.hn/web/image/product.template/19996/image_1024?unique=b84cc81"],
+            ["CLORO ACTICLOR 1 GALON", "4", 7, "https://walmarthn.vtexassets.com/arquivos/ids/512782-800-450?v=638660199284230000&width=800&height=450&aspect=true"],
+            ["LIMPIOX CREMA AZUL IND 18*425GR", "18", 7, "https://static-files.bluexpace.com/hn/uploads/2021/03/A54839.webp"],
+            ["LIMPIOX CREMA LIMON IND 18*425GR", "18", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706877/36633_01.jpg?v=638931357613670000"],
+            ["LIMPIOX CREMA AZUL IND 12*825GR", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706840/8856_01.jpg?v=638931342021600000"],
+            ["LIMPIOX CREMA LIMON IND 12*825GR", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706876-800-450?v=638931355140300000&width=800&height=450&aspect=true"],
+            ["LIMPIOX DISKETTE AZUL 1*72", "72", 7, "https://www.distribuidoramorazan.com/web/image/product.template/4894/image"],
+            ["LIMPIOX DISKET ALOE 1*72 C", "72", 7, "https://walmarthn.vtexassets.com/arquivos/ids/762955/lavaplatos-disco-aloe-vera-115-g-7421001650026.webp?v=639090285420570000"],
+            ["LIMPIOX DISKETT LIMON 1*72 CJ", "72", 7, "https://walmarthn.vtexassets.com/arquivos/ids/751223/lavaplatos-limpiox-disco-limon-con-bicarbonato-115-g-7421001615254.webp?v=639059781030730000"],
+            ["LIMPIOX CILINDRO ALOE 245 GRS 1*24", "24", 7, "https://static-files.bluexpace.com/hn/uploads/2025/06/A54833.webp"],
+            ["LIMPIOX CILINDRO AZUL 245 GR*24", "24", 7, "https://super-del-corral.myshopify.com/cdn/shop/products/7421001642267_1000x.webp?v=1658529066"],
+            ["LIMPIOX CILINDRO LIMON 245GR*24", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/708553/8833_01.jpg?v=638936388022530000"],
+            ["DESINFECTANTE LIMPIOX LAVANDA 24*450 ML", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706828/8844_01.jpg?v=638931192035700000"],
+            ["DESINFECTANTE LIMPIOX MANZANA 24*450 ML", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706838-800-450?v=638931321701570000&width=800&height=450&aspect=true"],
+            ["DESINFECTANTE LIMPIOX TUTIFRU 24*450 ML", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706836/8848_01.jpg?v=638931318082000000"],
+            ["DESINFECTANTE LIMPIOX FLORA 24*450 ML", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706834/8846_01.jpg?v=638931312337900000"],
+            ["DESINFECTANTE LIMPIOX NATURA 24*450 ML", "24", 7, "https://walmarthn.vtexassets.com/arquivos/ids/169847-1200-900?v=637662813677000000&width=1200&height=900&aspect=true"],
+            ["DESINFECTANTE LIMPIOX LAVANDA 12*900 ML", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706829/8845_01.jpg?v=638931195017730000"],
+            ["DESINFECTANTE LIMPIOX MANZANA 900ML*12", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706839/8851_01.jpg?v=638931324193530000"],
+            ["DESINFECTANTE LIMPIOX TUTIFRU 12*900ML", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706837/8849_01.jpg?v=638931318122170000"],
+            ["DESINFECTANTE LIMPIOX FLORA 12*900 ML", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/706835/8847_01.jpg?v=638931315038030000"],
+            ["DESINFECTANTE LIMPIOX FRESCURA NATURA 12*900 ML", "12", 7, "https://walmarthn.vtexassets.com/arquivos/ids/169847-800-450?v=637662813677000000&width=800&height=450&aspect=true"],
+            ["JABON CENTELLON VERDE 4*3*450GR", "4", 7, "https://static-files.bluexpace.com/hn/uploads/2021/03/A54821.webp"],
+            ["JABON CENTELLA ROSADO 4*450GR", "4", 7, "https://static-files.bluexpace.com/hn/uploads/2024/07/A74720.webp"],
+            ["JABON CENTELLA AVENA 4*450GR", "4", 7, "https://static-files.bluexpace.com/hn/uploads/2024/07/A74719.webp"],
+            ["JABON CENTELLA AZUL 4*450GR", "4", 7, "https://static-files.bluexpace.com/hn/uploads/2024/07/A74722.webp"],
+            ["JABON CENTELLA AMARILLO 4*450GR", "4", 7, "https://static-files.bluexpace.com/hn/uploads/2024/07/A74721.webp"],
+            ["JABON CENTELLA BLANCO 4*450GR", "4", 7, "https://drive.google.com/thumbnail?id=1gzIWP3EiLpsLuQxPNpa3ngga8L4o_pH7"],
+            ["JABON ZIXX VERDE 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/176355/Jabon-Zixx-Maxima-Limpieza-Verde-1700-Gr-1-4213.jpg?v=637672414015100000"],
+            ["JABON ZIXX AVENA 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/273299/Jab-n-Zixx-Avena-Con-Enzimas-425Gr-1-17409.jpg?v=638070286261530000"],
+            ["JABON ZIXX NENITOS 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/360849/4-Pack-Jab-n-Zixx-Nenito-Ropa-Delica-425Gr-1-4222.jpg?v=638419460693870000"],
+            ["JABON ZIXX BLANCO 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/685166/4215_02.jpg?v=638882850200700000"],
+            ["JABON ZIXX ROSADO 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/519948/4219_01.jpg?v=638663279694770000"],
+            ["JABON ZIXX ALGODON 1*5*4PACK", "5", 7, "https://lacolonia.vtexassets.com/arquivos/ids/250060/750894643219_1.jpg.jpg?v=638738681820530000"],
+            ["JABON ZIXX PEPINO 1*5*4PACK", "5", 7, "https://walmarthn.vtexassets.com/arquivos/ids/425219/53520_01.jpg?v=638561580734170000"],
+            ["JABON MAYA HOTEL 180 G", "48", 7, "https://distribuidoraalcance.com/wp-content/uploads/Jabon-de-tocador-Maya.jpg"],
+            ["JABON TOCADOR PLUS CREAM CONCHA NACAR 140G", "60", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2024/09/Jabon-de-tocador-Plus-Cream-concha-nacar-pastilla.png?strip=all&w=2560"],
+            ["JABON TOCADOR PLUS CREAM PLUS OLIVA Y ALOE 140G", "60", 7, "https://lagranbodega.vteximg.com.br/arquivos/ids/302724-1000-1000/7401001681145.jpg?v=638762858394170000"],
+            ["JABON TOCADOR PLUS CREAM PLUS AVENA Y LECHE 140G", "60", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2024/09/Jabon-de-tocador-Plus-Cream-avena-pastilla.png?strip=all&w=2560"],
+            ["JABON TOCADOR PLUS CREAM PLUS ACEITE DE COCO 140G", "60", 7, "https://epr4eqhkwx9.exactdn.com/wp-content/uploads/2024/09/Jabon-de-tocador-Plus-Cream-coco-pastilla.png?strip=all&w=2560"],
+            ["JABON JAN-SUR BLANCO 1*4*3", "4", 7, "https://drive.google.com/thumbnail?id=1Rl648ZUkeVqo6Qm3fpkgIXp33D2tLVGj"],
+            ["JABON JAN-SUR VERDE 1*4*3", "4", 7, "https://drive.google.com/thumbnail?id=1BaKieEvMVDWBztrnB32qKbeqXZWgFEHG"],
+            ["JABON JAN-SUR ROSADO 1*4*3", "4", 7, "https://drive.google.com/thumbnail?id=191H3LD2mtBkwSo5UcE44BJE57FavGYhv"],
+            ["JABON JAN-SUR AZUL 1*4*3", "4", 7, "https://drive.google.com/thumbnail?id=1ktOuHJjx91--tnkvbIxYeL1a5uNklaYj"],
+            ["FLASH PASTILLA GANCHO LAVANDA 1X48X72GR", "48", 7, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc32yafgcVidbW00OFkBK5jMoTlhneg4edWQ&s"],
+            ["FLASH PASTILLA GANCHO FLORAL 1X48X72GR", "48", 7, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UQgWBdAvYhQ5aEtKJHbjX0Wc4PQI61rm0w&s"],
+        ];
+
+        // Construcción y lectura de productos (con manejo de imágenes)
+        const productos = rawData.map(item => {
+            // Verifica si pusiste un link de imagen en la posición 4. Si no, usa el relleno inteligente.
+            const imagenUrl = item[3] && item[3].trim() !== "" 
+                ? item[3] 
+                : `https://via.placeholder.com/250x200?text=${encodeURIComponent(item[0].substring(0, 15))}...`;
+            
+            return {
+                nombre: item[0],
+                unidad: item[1] || "N/D",
+                categoria: catMap[item[2]],
+                img: imagenUrl
+            };
+        });
+
+        let currentCategory = 'Todos';
+
+        function displayProducts(items) {
+            const container = document.getElementById('product-container');
+            container.innerHTML = ''; 
+
+            if(items.length === 0) {
+                container.innerHTML = '<p style="padding: 20px; grid-column: 1/-1; text-align: center; color: #666;">No se encontraron productos.</p>';
+                return;
+            }
+
+            items.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${prod.img}" alt="${prod.nombre}" class="product-image" loading="lazy">
+                    <div class="product-info">
+                        <div>
+                            <h3 class="product-title">${prod.nombre}</h3>
+                            <p class="product-unit">CAJA DE: <strong>${prod.unidad}</strong></p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setCategory(categoria, element) {
+            currentCategory = categoria;
+            const listItems = document.querySelectorAll('.category-list li');
+            listItems.forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('current-category-title').innerText = categoria === 'Todos' ? 'Catálogo Completo' : `Categoría: ${categoria}`;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filteredProducts = productos;
+
+            if (currentCategory !== 'Todos') {
+                filteredProducts = filteredProducts.filter(p => p.categoria === currentCategory);
+            }
+
+            if (searchTerm.trim() !== '') {
+                filteredProducts = filteredProducts.filter(p => p.nombre.toLowerCase().includes(searchTerm));
+            }
+
+            displayProducts(filteredProducts);
+        }
+
+        window.onload = () => displayProducts(productos);
+
+    </script>
+</body>
+</html>
