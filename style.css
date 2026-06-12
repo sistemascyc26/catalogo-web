@@ -279,3 +279,40 @@
                 grid-template-columns: 1fr; /* 1 columna en celulares pequeños */
             }
         }
+/* --- ETIQUETAS DE EXISTENCIA (STOCK) --- */
+        .image-container {
+            position: relative; /* Necesario para que la etiqueta flote sobre la imagen */
+        }
+
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--white);
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .in-stock {
+            background-color: #28a745; /* Verde para disponible */
+        }
+
+        .out-of-stock {
+            background-color: #dc3545; /* Rojo para agotado */
+        }
+
+        /* Estilo para botón deshabilitado */
+        .add-btn.disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+        
+        .add-btn.disabled:hover {
+            background-color: #cccccc;
+            transform: none;
+        }
