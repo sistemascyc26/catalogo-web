@@ -761,15 +761,11 @@
                 ? item[3] 
                 : `https://via.placeholder.com/250x200?text=${encodeURIComponent(item[0].substring(0, 15))}...`;
             
-            // Si pusiste true o false en el 5to espacio lo lee, si está vacío asume que sí hay (true)
-            const enExistencia = item.length > 4 ? item[4] : true;
-            
             return {
                 nombre: item[0],
                 unidad: item[1] || "N/D",
                 categoria: catMap[item[2]],
                 img: imagenUrl,
-                enExistencia: enExistencia
             };
         });
 
