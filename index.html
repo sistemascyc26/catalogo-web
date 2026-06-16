@@ -792,6 +792,10 @@
                     ? `<span class="stock-badge in-stock">En existencia</span>`
                     : `<span class="stock-badge out-of-stock">Agotado</span>`;
                 
+                const btnHtml = prod.enExistencia
+                    ? ``
+                    : `<button class="add-btn disabled" disabled>No Disponible</button>`;
+                
                 card.innerHTML = `
                     <div class="image-container">
                         ${badgeHtml}
