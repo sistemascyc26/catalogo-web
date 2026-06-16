@@ -755,13 +755,13 @@
             ["FLASH PASTILLA GANCHO FLORAL 1X48X72GR", "48", 7, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-UQgWBdAvYhQ5aEtKJHbjX0Wc4PQI61rm0w&s"],
         ];
 
-        // Construcción y lectura de productos
+       // Construcción y lectura de productos
         const productos = rawData.map(item => {
             const imagenUrl = item[3] && item[3].trim() !== "" 
                 ? item[3] 
                 : `https://via.placeholder.com/250x200?text=${encodeURIComponent(item[0].substring(0, 15))}...`;
             
-          // Si pusiste true o false en el 5to espacio lo lee, si está vacío asume que sí hay (true)
+            // Si pusiste true o false en el 5to espacio lo lee, si está vacío asume que sí hay (true)
             const enExistencia = item.length > 4 ? item[4] : true;
             
             return {
@@ -787,6 +787,7 @@
             items.forEach(prod => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                
                 // Configurar etiquetas y botones dependiendo del stock
                 const badgeHtml = prod.enExistencia 
                     ? `<span class="stock-badge in-stock">En existencia</span>`
@@ -794,8 +795,8 @@
                 
                 const btnHtml = prod.enExistencia
                     ? ``
-                    : `<button class="add-btn disabled" disabled>No Disponible</button>`;
-                
+                    : ``;
+
                 card.innerHTML = `
                     <div class="image-container">
                         ${badgeHtml}
@@ -804,7 +805,7 @@
                     <div class="product-info">
                         <div>
                             <h3 class="product-title">${prod.nombre}</h3>
-                            <p class="product-unit">CAJA DE: <strong>${prod.unidad}</strong></p>
+                            <p class="product-unit">U. Medida: <strong>${prod.unidad}</strong></p>
                         </div>
                         ${btnHtml}
                     </div>
