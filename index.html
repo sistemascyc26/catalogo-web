@@ -821,6 +821,11 @@
             element.classList.add('active');
             document.getElementById('current-category-title').innerText = categoria === 'Todos' ? 'Catálogo Completo' : `Categoría: ${categoria}`;
             applyFilters();
+            // Hacer scroll hacia arriba suavemente
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+                });
         }
 
         function applyFilters() {
